@@ -1,24 +1,22 @@
-import logo from './logo.svg';
+import Canvas from "./components/Canvas";
+import { Flex, Spacer } from '@chakra-ui/react'
 import './App.css';
+import { useState } from "react";
+import Header from "./components/Header/Header";
 
 function App() {
+
+  const [imageUrl, setImageUrl]  = useState(null);
+  const [canvas, setCanvas]  = useState(null);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+    <Flex direction="column">
+      <Header imageUrl={imageUrl} setImageUrl={setImageUrl} canvas={canvas} />
+      <Canvas imageUrl={imageUrl} canvas={canvas} setCanvas={setCanvas} />
+    </Flex>
+    </>
+
   );
 }
 
