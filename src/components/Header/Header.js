@@ -6,13 +6,30 @@ import SaveButton from "./SaveButton";
 // import ZoomControl from "./ZoomControl";
 import { Flex, Spacer } from '@chakra-ui/react'
 
-const Header = ({imageUrl, setImageUrl, canvas}) => {
+import {ReactComponent as Redo} from "../../assets/redo.svg";
+import {ReactComponent as Undo} from "../../assets/undo.svg";
+
+import "../../styles/Header.css";
+
+const Header = ({imageUrl, setImageUrl, canvas, handleRedo, handleUndo}) => {
 
   return (
     <>
-        <Flex direction="row">
+        <Flex direction="row" className="header">
+
+          <div className="header_redo_buttons">
+            <Undo className="header_button"
+              onClick={handleUndo}
+            />
+            <Redo className="header_button"
+              onClick={handleRedo}
+            />
+          </div>
+
+          <div className="header_file_buttons">
             <UploadButton imageUrl={imageUrl} setImageUrl={setImageUrl} />
             <SaveButton canvas={canvas} />
+          </div>
         </Flex>
     </>
   );

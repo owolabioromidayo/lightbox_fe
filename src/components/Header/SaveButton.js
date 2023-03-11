@@ -23,7 +23,7 @@ const SaveButton = ({canvas}) => {
 
   return (
     <>
-      <Save width="20px" height="20px"
+      <Save className="header_button"
         onClick={saveImage}
       />
     </>

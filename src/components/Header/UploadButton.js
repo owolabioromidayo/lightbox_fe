@@ -34,12 +34,13 @@ const UploadButton = ({imageUrl, setImageUrl}) => {
   return (
     <>
         <Flex>
-            <Upload onClick={clickHandler} width="20px" height="20px"/>
+            <Upload onClick={clickHandler} className="header_button"/>
             <input
                 ref={inputFileRef}
                 type="file"
                 onChange={uploadImage}
                 accept="image/jpeg"
+                className="hidden_file_input"
             />
         </Flex>
     </>
