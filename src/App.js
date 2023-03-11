@@ -15,18 +15,34 @@ function App() {
   const [responseImageUrls, setResponseImageUrls]  = useState([]);
   const [selectedImageDetails, setSelectedImageDetails] = useState({x:0, y:0});
 
+  const [cropMode, setCropMode] = useState(false);
+
   const canvasRef = useRef(null);
   const [canvas, setCanvas] = useState(null);
   const [history, setHistory] = useState([]);
 
   const [toolbarStore, setToolbarStore] = useState({
     isDrawingMode: false,
+    // isTextMode: false,
     drawingStore: {
       lineWidth: 100,
       opacity: 1,
       colorCode: "#000000",
       // isLineStraight: false
-    }
+    },
+    effectsStore : {
+      brightness: 0,
+      contrast: 0,
+      saturation: 0,
+      tintColor: "#000",
+      tintOpacity: 0,
+      invert: 0,
+      hue: 0,
+      noise: 0,
+      blur: 0,
+      pixelate : 1
+    },
+    textStore: {}
   })
 
 
@@ -124,15 +140,45 @@ function handleRedo() {
       // const newCanvas =  new fabric.Canvas(canvasRef.current);
 
       let drawingProperties = toolbarStore.drawingStore;
+      let effects= toolbarStore.effectsStore;
+      let textStore= toolbarStore.textStore;
+
+
+      let filters = [
+        new fabric.Image.filters.Brightness({ brightness: effects.brightness }),
+        new fabric.Image.filters.Contrast({ contrast: effects.contrast}),
+        new fabric.Image.filters.Saturation({ saturation: effects.saturation }),
+        // new fabric.Image.filters.Tint({ color: effects.tintColor, opacity: effects.tintOpacity }),
+        new fabric.Image.filters.Invert({ invert: effects.invert }),
+        new fabric.Image.filters.HueRotation({ rotation: effects.hue}),
+        new fabric.Image.filters.Noise({ noise: effects.noise}),
+        new fabric.Image.filters.Blur({ blur: effects.blur }),
+        new fabric.Image.filters.Pixelate({ blocksize: effects.pixelate})
+      ];
+
 
       //other toolbar change settings here
       setCanvas(canvas => {
 
         canvas.isDrawingMode = toolbarStore.isDrawingMode;
+        canvas.selection = toolbarStore.isSelectionMode;
+        
         canvas.freeDrawingBrush.color = drawingProperties.colorCode;
         canvas.freeDrawingBrush.width = drawingProperties.lineWidth;
         canvas.freeDrawingBrush.opacity = drawingProperties.opacity;
         // canvas.freeDrawingBrush.straight = drawingProperties.isLineStraight;
+
+        canvas.backgroundImageFilters = filters;
+        // canvas.renderAll();
+        canvas.setBackgroundImage(canvas.toDataURL(), canvas.renderAll.bind(canvas), {
+          filters: filters
+        });
+
+       
+        if (textStore.textObj){
+          canvas.add(textStore.textObj)
+          textStore.textObj = null;
+        }
 
         return canvas;
 
@@ -170,6 +216,7 @@ function handleRedo() {
         <Toolbar 
           toolbarStore={toolbarStore} 
           setToolbarStore={setToolbarStore}
+          setCropMode={setCropMode}
         />
 
         <Canvas 
@@ -181,6 +228,7 @@ function handleRedo() {
          setSelectedImageDetails={setSelectedImageDetails}
          handleCanvasChange={handleCanvasChange}
          toolbarStore={toolbarStore}
+         cropMode={cropMode}
          />
 
         {/* <ImageCropper /> */}

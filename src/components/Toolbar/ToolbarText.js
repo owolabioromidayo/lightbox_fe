@@ -6,74 +6,95 @@ import {ReactComponent as AlignLeft}  from "../../assets/align-left.svg";
 import {ReactComponent as AlignCenter}  from "../../assets/align-center.svg";
 import {ReactComponent as AlignRight}  from "../../assets/align-right.svg";
 
+import { fabric } from "fabric";
+
 import Slider from "../Slider";
 import ColorPicker from "../ColorPicker";
 import ToggleButton from "../ToggleButton";
 
 const ToolbarText= ({toolbarStore, setToolbarStore}) => {
-  const { textStore, objectManagerStore } = useStore();
 
- const TextСonstants = {
-  MIN_FONT_SIZE: 10,
-  MAX_FONT_SIZE: 200,
-  INIT_FONT_SIZE: 40,
-  MIN_LINE_HEIGHT: 1,
-  MAX_LINE_HEIGHT: 10,
-  INIT_TEXT: "click to select",
-};
+    const TextСonstants = {
+    MIN_FONT_SIZE: 10,
+    MAX_FONT_SIZE: 200,
+    INIT_FONT_SIZE: 40,
+    MIN_LINE_HEIGHT: 1,
+    MAX_LINE_HEIGHT: 10,
+    INIT_TEXT: "click to select",
+    };
 
+    const textStore = toolbarStore.textStore;
+
+    //each text object has its own textstore?
+
+
+  const setTextProperty = (key, value) => {
+       let newStore = {...toolbarStore}
+       newStore.textStore[key] = value;
+       setToolbarStore(newStore)
+  }
+
+    const addText = () => {
+        let text = new fabric.IText('Type your text here', {
+            left: 50,
+            top: 50,
+            fontFamily: 'Arial',
+            fontSize: 24,
+            fill: '#000000'
+        });
+ 
+        setTextProperty("textObj", text )
+    }
 
   const options = [
     {
       icon:  <Bold />,
       name: "fontWeight",
-      handler: () => textStore.toggleFontWeight(),
+      handler: () => setTextProperty("fontWeight", textStore.fontWeight === "bold" ? "normal": "bold"),
       isActive: (fontWeight) => fontWeight === "bold",
     },
     {
       icon:  <Underline />,
       name: "underline",
-      handler: () => textStore.toggleTextDecoration(),
+      handler: () => setTextProperty("underline", !textStore.underline ),
       isActive: (isUnderlined) => isUnderlined,
     },
     {
       icon:  <Italic />,
       name: "fontStyle",
-      handler: () => textStore.toggleFontStyle(),
+      handler: () => setTextProperty("fontStyle", textStore.fontStyle === "normal" ? "italic": "normal"),
       isActive: (fontStyle) => fontStyle === "italic",
     },
     {
       icon:  <AlignLeft />,
       name: "textAlign",
-      handler: () => textStore.setTextAlign("left"),
+      handler: () => setTextProperty("textAlign", "left"),
       isActive: (textAlign) => textAlign === "left",
     },
     {
       icon:  <AlignCenter />,
       name: "textAlign",
-      handler: () => textStore.setTextAlign("center"),
+      handler: () => setTextProperty("textAlign", "center"),
       isActive: (textAlign) => textAlign === "center",
     },
     {
       icon:  <AlignRight />,
       name: "textAlign",
-      handler: () => textStore.setTextAlign("right"),
+      handler: () => setTextProperty("textAlign", "right"),
       isActive: (textAlign) => textAlign === "right",
     },
   ];
-  return useObserver(() => (
+  return (
     <div className="toolbar__content">
       <button
-        onClick={() => textStore.addText()}
+        onClick={addText}
         className="toolbar__action-btn"
       >
         Add Text
       </button>
-      {objectManagerStore.selectedObject ? (
-        <>
         <div className="toolbar__options toolbar__options_three-col">
           {options.map((option, index) => {
-            const optionValue = (textStore )[option.name];
+            const optionValue = textStore[option.name];
             return (
               <div
                 key={index}
@@ -101,34 +122,32 @@ const ToolbarText= ({toolbarStore, setToolbarStore}) => {
           value={textStore.lineHeight}
           min={TextСonstants.MIN_LINE_HEIGHT}
           max={TextСonstants.MAX_LINE_HEIGHT}
-          callback={value => textStore.setLineHeight(value)}
+          callback={value => setTextProperty("lineHeight", value)}
         />
         <ColorPicker
           title="Colors"
           currentColorCode={textStore.fontColorCode}
-          callback={rgbCode => textStore.setFontColor(rgbCode)}
+          callback={rgbCode => setTextProperty("fontColorCode", rgbCode)}
         />
         <ToggleButton
           title="Background"
           checked={!textStore.isBgTransparent}
-          callback={() => textStore.toggleBackground()}
+          callback={() =>setTextProperty("isBgTransparent", !textStore.isBgTransparent)}
         />
         {!textStore.isBgTransparent && (
           <ColorPicker
             currentColorCode={textStore.bgColorCode}
-            callback={rgbCode => textStore.setBackgroundColor(rgbCode)}
+            callback={rgbCode => setTextProperty("bgColorCode", rgbCode)}
           />
         )}
-        <button
+        {/* <button
           className="toolbar__action-btn"
           onClick={() => objectManagerStore.deleteSelectedObject()}
         >
           Remove
-        </button>
-        </>
-      ) : null}
+        </button> */}
     </div>
-  ));
+  );
 };
 
 export default ToolbarText;

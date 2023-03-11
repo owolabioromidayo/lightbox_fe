@@ -10,7 +10,8 @@ const Canvas = ({imageUrl,
                 setSelectedImageDetails, 
                 canvasRef,
                 toolbarStore,
-                handleCanvasChange
+                handleCanvasChange,
+                cropMode
               }) => {
 
   const [isDrawing, setIsDrawing] = useState(false);
@@ -81,7 +82,7 @@ const Canvas = ({imageUrl,
     // }
 
     // Get cropped image data as base64
-    // const croppedImageDataUrl = cropImage(canvas, rect);
+    const croppedImageDataUrl = cropImage(canvas, rect);
 
     //send over the network, some axios shit here
     // setImageDataUrl(croppedImageDataUrl);
@@ -169,9 +170,11 @@ const Canvas = ({imageUrl,
         scaleY: 1 / canvas.getZoom(),
       })
 
-    setSelectedImageDetails({x: left, y: top})
-    // setImageDataUrl(croppedImageDataUrl);
-    setSelectedImageUrl(croppedImageDataUrl);
+    if (cropMode){
+      setSelectedImageDetails({x: left, y: top})
+      // setImageDataUrl(croppedImageDataUrl);
+      setSelectedImageUrl(croppedImageDataUrl);
+    }
     
 
 

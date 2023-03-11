@@ -64,8 +64,7 @@
 }
 
 .toolbar__icon {
-    color: #fff;
-    fill: white;
+    fill: rgb(169, 169, 169);
     font-size: 20px;
     /* width: 25%; */
     width: 25px;
@@ -74,7 +73,45 @@
     display: block;
     margin: 5px 5px;
 }
+
+.toolbar__icon_active{
     
+    fill: white;
+    width: 33px;
+    height: 33px;
+    /* font-weight: bold; */
+    /* stroke-width: 100px; */
+}
+
+
+  .toolbar__options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: .78125vw;
+    row-gap: .78125vw;
+
+  }
+
+.toolbar__options_three-col {
+      grid-template-columns: repeat(3, 1fr);
+    }
+.toolbar__option{
+    color: #fff;
+    background-color: rgb(135, 126, 126);
+    padding: 1vw 1vw;
+    fill: white;
+    font-size: 20px;
+    display: flex;
+    /* width: 25%; */
+    width: 25px;
+    height: 25px;
+    margin: 5px 5px;
+}
+
+.toolbar__option_active {
+      border: .2vw solid white;
+    }
+
 .toolbar_settings{
     width: 300px;
     padding: none;

@@ -12,49 +12,23 @@ import { useState } from "react";
 
 import { Flex, Center } from "@chakra-ui/react";
 import ToolbarDrawing from "./ToolbarDrawing";
-// import ToolbarText from "./ToolbarText";
-// import ToolbarEffects from "./ToolbarEffects";
+import ToolbarText from "./ToolbarText";
+import ToolbarEffects from "./ToolbarEffects";
 
 
 import "../../styles/Toolbar.css";
-import ToolbarEffects from "./ToolbarEffects";
 
-const Toolbar = ({toolbarStore, setToolbarStore}) => {
-//   const contentMap: {[name: string]: JSX.Element} = {
-//     crop: <ToolbarCrop />,
-//     adjust: <ToolbarRotate />,
-//     drawing: <ToolbarDrawing />,
-//     text: <ToolbarText />,
-//     effects: <ToolbarEffects />,
-//   };
-
+const Toolbar = ({toolbarStore, setToolbarStore, setCropMode}) => {
     // const [showSettings, setShowSettings] = useState({
     //     effects : false
     // })
 
     const [showEffects, setShowEffects] = useState(false);
     const [showDrawing, setShowDrawing] = useState(false);
-//   return useObserver(() => (
-//     <TransitionGroup component={null}>
-//       {UIStore.isToolbarOpen && (
-//         <CSSTransition
-//           timeout={600}
-//           classNames="toolbar"
-//         >
-//           <section className={`toolbar custom-scrollbar`}>
-//             <div className="toolbar__header">
-//               <h4 className="toolbar__title">{canvasStore.mode}</h4>
-//               <Close onClick={() => {
-//                 canvasStore.resetToBaseScale();
-//                 UIStore.closeToolbar();
-//               }}/>
-//             </div>
-//             {contentMap[canvasStore.mode]}
-//           </section>
-//         </CSSTransition>
-//       )}
-//     </TransitionGroup>
-//   ));
+    const [showText, setShowText] = useState(false);
+
+    const [settingChoice, setSettingChoice] = useState("");
+// 
 
     // const handleSettingsClick = (keyToSetTrue) => {
     //     // setShowSettings((settings) => {
@@ -76,54 +50,91 @@ const Toolbar = ({toolbarStore, setToolbarStore}) => {
 
     const setShowSettings = (choice) => {
         //make everything false
-        setShowEffects(false);
-        setShowDrawing(false);
+        // setShowEffects(false);
+        // setShowDrawing(false);
+        // setShowText(false);
 
-        switch (choice){
-            case "effects":
-                setShowEffects(!showEffects);
-            case "drawing":
-                setShowDrawing(!showDrawing);
+        // switch (choice){
+        //     case "effects":
+        //         setShowEffects(!showEffects);
+        //     case "drawing":
+        //         setShowDrawing(!showDrawing);
+        //     case "text":
+        //         setShowText(!showText);
+
+        if (settingChoice === choice){
+            setSettingChoice("")
+        }else{
+            setSettingChoice(choice);
         }
 
     }
+
+    const handleCropClick = () => {
+        setCropMode(cp => !cp);
+        setShowSettings("crop");
+        setToolbarStore({...toolbarStore, 
+            isSelectionMode: !toolbarStore.isSelectionMode, isDrawingMode: false})
+    }
     const handlePointerClick = () => {
-        setToolbarStore({...toolbarStore, isDrawingMode: false})
+        setToolbarStore({...toolbarStore, isDrawingMode: false, isSelectionMode: true})
+        setShowSettings("pointer");
     }
 
     const handlePencilClick = () => {
-        setToolbarStore({...toolbarStore, isDrawingMode: true})
+        setToolbarStore({...toolbarStore, isDrawingMode: !toolbarStore.isDrawingMode, isSelectionMode: false})
         setShowSettings("drawing")
         //something for drawing option modal
     }
 
     return (
         <div className="toolbar_parent">
-            {/* <Flex backgroundColor="#0f0e0e" direction="column" >  */}
-                {/* <Crop width="40px" height="20px" style={{color: "white"}} className="icon" />
-                <Pencil width="40px" height="40px" />
-                <Adjust width="40px" height="40px" />
-                <Text width="40px" height="40px" /> */}
-                {/* <ToolbarDrawing drawingStore={drawingStore} setDrawingStore={setDrawingStore}/> */}
-                {/* <ToolbarText /> */}
-                {/* <ToolbarEffects /> */}
-
         <div class="toolbar">
                 <div onClick={handlePointerClick}>
-                    <Pointer className="toolbar__icon toolbar__top_icon"/>
+                    <Pointer 
+                    className={`toolbar__icon toolbar__top_icon ${settingChoice == "pointer" ? "toolbar__icon_active" : ""}`}/>
                 </div>
-                <Crop className="toolbar__icon " />
+                <div onClick={handleCropClick}>
+                    <Crop 
+                    className={`toolbar__icon ${settingChoice == "crop" ? "toolbar__icon_active" : ""}`}/>
+                </div>
                 <div onClick={handlePencilClick}>
-                    <Pencil className="toolbar__icon"/>
+                    <Pencil 
+                    className={`toolbar__icon ${settingChoice == "drawing" ? "toolbar__icon_active" : ""}`}/>
                 </div>
                 <div onClick={() => setShowSettings("effects")}>
-                    <Adjust className="toolbar__icon"/>
+                    <Adjust 
+                    className={`toolbar__icon ${settingChoice == "effects" ? "toolbar__icon_active" : ""}`}/>
                 </div>
-                <Text className="toolbar__icon toolbar__bottom_icon"/>
+                <div onClick={() => setShowSettings("text")}>
+                    <Text 
+                    className={`toolbar__icon toolbar__bottom_icon ${settingChoice == "text" ? "toolbar__icon_active" : ""}`}/>
+                </div>
         </div>
 
-        { showEffects && <ToolbarEffects toolbarStore={toolbarStore} setToolbarStore={setToolbarStore} />}
+        {/* { showEffects && <ToolbarEffects toolbarStore={toolbarStore} setToolbarStore={setToolbarStore} />}
         { showDrawing && <ToolbarDrawing toolbarStore={toolbarStore} setToolbarStore={setToolbarStore} />}
+        { showText && <ToolbarText toolbarStore={toolbarStore} setToolbarStore={setToolbarStore} />} */}
+
+        {/* {() => {switch(settingChoice){
+            case "":
+                return <></>
+            case "text":
+                return <ToolbarText toolbarStore={toolbarStore} setToolbarStore={setToolbarStore} />
+            case "drawing":
+                return <ToolbarDrawing toolbarStore={toolbarStore} setToolbarStore={setToolbarStore} />
+            case "effects":
+                return <ToolbarEffects toolbarStore={toolbarStore} setToolbarStore={setToolbarStore} />
+
+        }} } */}
+        {
+        settingChoice == "text" ?
+         <ToolbarText toolbarStore={toolbarStore} setToolbarStore={setToolbarStore} /> :
+        settingChoice == "drawing" ?
+        <ToolbarDrawing toolbarStore={toolbarStore} setToolbarStore={setToolbarStore} />:
+        settingChoice == "effects" ?
+        <ToolbarEffects toolbarStore={toolbarStore} setToolbarStore={setToolbarStore} /> :
+         <></>  }
         </div>
     )
 };

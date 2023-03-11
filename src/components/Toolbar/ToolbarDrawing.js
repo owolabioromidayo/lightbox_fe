@@ -6,11 +6,8 @@ import { useState } from "react";
 const ToolbarDrawing= ({toolbarStore, setToolbarStore}) => {
 
   const setDrawingProperty = (key, value) => {
-      console.log(key, value);
-
        let newStore = {...toolbarStore}
        newStore.drawingStore[key] = value
-       console.log(newStore)
        setToolbarStore(newStore)
   }
   return (
