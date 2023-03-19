@@ -12,7 +12,10 @@ function Sidebar({setResponseImageUrls, responseImageUrls, selectedImageUrl,
   const [workerInfo, setWorkerInfo] = useState([])
   const [serverURL, setServerURL] = useState("http://localhost:3003")
   const [apiToken, setApiToken ] = useState("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2Nzg0NDIyODUsImlhdCI6MTY3NzU3ODI4NSwiaWQiOjN9.CCRs6Esb86x7cB7EMAB9IpidjaXBYruGASYcZtWUhIc")
+  const [secondaryWorkerURL, setSecondaryWorkerURL] = useState("http://localhost:3009")
   const [workerAddress, setWorkerAddress] = useState("")
+
+  const [isFederatedMode, setIsFederatedMode] = useState(false);
 
   const [workerOptions, setWorkerOptions] = useState([])
   const [jobOptions, setJobOptions] = useState([])
@@ -32,9 +35,6 @@ function Sidebar({setResponseImageUrls, responseImageUrls, selectedImageUrl,
       axios({
         method: 'get',
         url: `${serverURL}/workers`, // this should be set from the form
-        data: {
-          token : apiToken
-        }
       })
         .then(function (res) {
           console.log(res.data)
@@ -45,6 +45,9 @@ function Sidebar({setResponseImageUrls, responseImageUrls, selectedImageUrl,
           setWorkerInfo(res.data)
           setWorkerSelect(fWorker)
           setJobSelect(fJob)
+          setSecondaryWorkerURL(serverURL);
+
+          setIsFederatedMode(false);
 
           setJobInfo(res.data[fWorker].models[fJob])
           //set dropdown to first element, create the dropdown and map it to another set
@@ -53,20 +56,70 @@ function Sidebar({setResponseImageUrls, responseImageUrls, selectedImageUrl,
     }
   }, [serverURL, apiToken])
 
+  useEffect(() => {
+
+    const delayDebounceFn = setTimeout(() => {
+      // Make HTTP request here with searchTerm
+      //make a request to localhost 3000 to get worker information
+      if (serverURL && apiToken){
+        axios({
+          method: 'get',
+          url: `${secondaryWorkerURL}/workers`, // this should be set from the form
+        })
+          .then(function (res) {
+            console.log(res.data)
+            let fWorker = "" 
+            let fJob = ""
+            try{
+              fWorker= Object.keys(res.data)[0]
+              fJob = Object.keys(res.data[Object.keys(res.data)[0]].models)[0]
+              setJobInfo(res.data[fWorker].models[fJob])
+
+            } catch {
+
+              setJobInfo({})
+              setJobOptions([])
+            }
+
+            setWorkerOptions(Object.keys(res.data))        
+            setWorkerInfo(res.data)
+            setWorkerSelect(fWorker)
+            setJobSelect(fJob)
+            
+            setIsFederatedMode(true);
+
+            //set dropdown to first element, create the dropdown and map it to another set
+            // of jobs and generated fields
+          });
+      }
+    }, 1000);
+
+  return () => clearTimeout(delayDebounceFn);
+  }, [secondaryWorkerURL])
+
+
+
 
   useEffect(() => {
     if (workerInfo && workerSelect){
-      setJobOptions(Object.keys(workerInfo[workerSelect].models))
+      try{
+        setJobOptions(Object.keys(workerInfo[workerSelect].models))
+      } catch {
+        setJobOptions([])
+      }
     }
   }, [workerSelect])
 
 
   useEffect(() => {
     if (jobSelect){
-      setJobOptions(Object.keys(workerInfo[workerSelect].models))
-
-      //jobInfo update
-      setJobInfo(workerInfo[workerSelect].models[jobSelect])
+      try{
+        setJobOptions(Object.keys(workerInfo[workerSelect].models))
+        //jobInfo update
+        setJobInfo(workerInfo[workerSelect].models[jobSelect])
+      } catch{
+        setJobInfo({})
+      }
     }
   }, [jobSelect])
 
@@ -88,21 +141,44 @@ function Sidebar({setResponseImageUrls, responseImageUrls, selectedImageUrl,
       // console.log(key, value)
     });
 
-    axios({
-      method: 'post',
-      url: `${serverURL}/execute_task/${workerSelect}`, // this should be set from the form
-      data: {
-        token : apiToken,
-        model: jobSelect,
-        ...object
-      }
-    })
-      .then(function (res) {
-        console.log(res)
-        // console.log(res.data)
-        setResponseImageUrls(res.data.data)
-      });
+    if(!isFederatedMode){
+      axios({
+        method: 'post',
+        url: `${serverURL.trim()}/execute_task/${workerSelect.trim()}`, // this should be set from the form
+        data: {
+          token : apiToken,
+          model: jobSelect,
+          ...object
+        }
+      })
+        .then(function (res) {
+          console.log(res)
+          // console.log(res.data)
+          setResponseImageUrls(res.data.data)
+        });
+    } else{
+        axios({
+          method: 'post',
+          url: `${serverURL.trim()}/make_federated_request/${workerSelect.trim()}`, // this should be set from the form
+          data: {
+            token : apiToken,
+            model: jobSelect,
+            url: secondaryWorkerURL.trim(),
+            ...object
+          }
+        })
+          .then(function (res) {
+            console.log(res)
+            // console.log(res.data)
+            setResponseImageUrls(res.data.data)
+          });
+    }
 
+  }
+
+
+  const handleSecondaryURLChange = (value) => {
+    setSecondaryWorkerURL(value);
   }
 
   return (
@@ -115,8 +191,10 @@ function Sidebar({setResponseImageUrls, responseImageUrls, selectedImageUrl,
         <input type="text" placeholder="Enter token" onChange={(e) => setApiToken(e.target.value)} value={apiToken} />
 
         <label>Specific Worker Address:</label>
-        <input type="text" placeholder="Enter worker address " onChange={(e) => setWorkerAddress(e.target.value)} />
+        <input type="text" placeholder="Enter worker address " onChange={(e) => setWorkerAddress(e.target.value)} value={workerAddress} />
 
+        <label>Secondary URL:</label>
+        <input type="text" placeholder="Enter secondary URL" onChange={e => handleSecondaryURLChange(e.target.value)} value={secondaryWorkerURL}/>
       </div>
 
       <div className="dropdown">
