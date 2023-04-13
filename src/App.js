@@ -105,16 +105,16 @@ function handleRedo() {
           }) 
 
 
-      window.addEventListener('keydown', function(e) {
-      if (e.key === "Delete") { 
-        let activeObject = newCanvas.getActiveObject();
-        if (activeObject) {
-          console.log(activeObject)
-          //TODO: history record
-          newCanvas.remove(activeObject);
-        }
-      }
-    });
+    //   window.addEventListener('keydown', function(e) {
+    //   if (e.key === "Delete") { 
+    //     let activeObject = newCanvas.getActiveObject();
+    //     if (activeObject) {
+    //       console.log(activeObject)
+    //       //TODO: history record
+    //       newCanvas.remove(activeObject);
+    //     }
+    //   }
+    // });
 
     setCanvas(newCanvas);
     setHistory([newCanvas.toJSON()]);
@@ -136,7 +136,7 @@ function handleRedo() {
 
   useEffect(() => {
     if(canvas){
-      console.log(toolbarStore)
+      // console.log(toolbarStore)
       // const newCanvas =  new fabric.Canvas(canvasRef.current);
 
       let drawingProperties = toolbarStore.drawingStore;

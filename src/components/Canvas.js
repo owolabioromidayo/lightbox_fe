@@ -157,8 +157,6 @@ const Canvas = ({imageUrl,
     const width = 512
     const height = 512
 
-    // const width = 200 
-    // const height = 200 
     // Create cropped canvas and image
 
     const croppedImageDataUrl = canvas.toDataURL({
@@ -171,6 +169,8 @@ const Canvas = ({imageUrl,
       })
 
     if (cropMode){
+
+      console.log(left, top)
       setSelectedImageDetails({x: left, y: top})
       // setImageDataUrl(croppedImageDataUrl);
       setSelectedImageUrl(croppedImageDataUrl);
@@ -185,11 +185,32 @@ return croppedImageDataUrl;
 };
 
 
-  useEffect(() => {
-    if (imageUrl === null){
-        return;
-    }
+  // useEffect(() => {
+  //   let container = canvasRef.current.parentNode
+  //   let newCanvas = new fabric.Canvas(canvasRef.current, {
+  //             height: container.offsetHeight,
+  //             width: container.offsetWidth,
+  //             // height: 700,
+  //             // width: 700,
+  //             backgroundColor: '#d8d2db',
+  //             isDrawingMode: false,
+  //             freeDrawingBrush: {
+  //                 color: "black",
+  //                 lineWidth: 10
+  //              }
+  //         }) 
 
+
+  //   newCanvas.on('mouse:down', handleMouseDown);
+  //   newCanvas.on('mouse:up', handleMouseUp);
+
+  //   setCanvas(newCanvas);
+  // }, []);
+
+
+
+  useEffect(() => {
+  
     if(typeof(imageUrl) == 'string'){
       fabric.Image.fromURL(imageUrl, function(oImg) {
           const container = canvasRef.current.parentNode;
@@ -232,7 +253,8 @@ return croppedImageDataUrl;
             // return () => {
             //   window.removeEventListener('resize', resizeCanvas);
             // };
-      });
+      }
+      );
     }
 
   }, [imageUrl])

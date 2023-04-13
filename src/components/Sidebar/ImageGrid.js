@@ -29,7 +29,7 @@ function ImageGrid({ imageUrls, canvas, selectedImageDetails, setCanvas }) {
         oImg.set({
             left: selectedImageDetails.x,
             top: selectedImageDetails.y,
-            selectable: true, // make the image unselectable
+            selectable: true, 
         });
 
         setCanvas((canv) => {

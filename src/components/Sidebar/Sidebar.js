@@ -5,14 +5,16 @@ import axios from 'axios'
 
 import ImageGrid from './ImageGrid';
 import Base64ImageInput from './Base64ImageInput';
+import SliderToggleButton from '../SliderToggleButton';
 
 function Sidebar({setResponseImageUrls, responseImageUrls, selectedImageUrl, 
   canvas, setCanvas, selectedImageDetails}) {
 
   const [workerInfo, setWorkerInfo] = useState([])
   const [serverURL, setServerURL] = useState("http://localhost:3003")
-  const [apiToken, setApiToken ] = useState("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2Nzg0NDIyODUsImlhdCI6MTY3NzU3ODI4NSwiaWQiOjN9.CCRs6Esb86x7cB7EMAB9IpidjaXBYruGASYcZtWUhIc")
-  const [secondaryWorkerURL, setSecondaryWorkerURL] = useState("http://localhost:3009")
+  const [apiToken, setApiToken ] = useState("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2ODE1MTcwOTcsImlhdCI6MTY4MDY1MzA5NywiaWQiOjZ9.fmrte8_1G1QpDfVS8H3se8ug4ZUst_ys6NfOuUaKmM8")
+  const [secondaryWorkerURL, setSecondaryWorkerURL] = useState("")
+  // const [secondaryWorkerURL, setSecondaryWorkerURL] = useState("http://localhost:3009")
   const [workerAddress, setWorkerAddress] = useState("")
 
   const [isFederatedMode, setIsFederatedMode] = useState(false);
@@ -47,7 +49,7 @@ function Sidebar({setResponseImageUrls, responseImageUrls, selectedImageUrl,
           setJobSelect(fJob)
           setSecondaryWorkerURL(serverURL);
 
-          setIsFederatedMode(false);
+          // setIsFederatedMode(false);
 
           setJobInfo(res.data[fWorker].models[fJob])
           //set dropdown to first element, create the dropdown and map it to another set
@@ -86,7 +88,7 @@ function Sidebar({setResponseImageUrls, responseImageUrls, selectedImageUrl,
             setWorkerSelect(fWorker)
             setJobSelect(fJob)
             
-            setIsFederatedMode(true);
+            // setIsFederatedMode(true);
 
             //set dropdown to first element, create the dropdown and map it to another set
             // of jobs and generated fields
@@ -128,7 +130,6 @@ function Sidebar({setResponseImageUrls, responseImageUrls, selectedImageUrl,
     
     let formData = new FormData(e.target);
     // console.log(formData);
-    console.log("Submitting....");
 
     let object = {};
     formData.forEach(function(value, key){
@@ -142,6 +143,8 @@ function Sidebar({setResponseImageUrls, responseImageUrls, selectedImageUrl,
     });
 
     if(!isFederatedMode){
+    console.log("Submitting conventional....");
+
       axios({
         method: 'post',
         url: `${serverURL.trim()}/execute_task/${workerSelect.trim()}`, // this should be set from the form
@@ -157,6 +160,7 @@ function Sidebar({setResponseImageUrls, responseImageUrls, selectedImageUrl,
           setResponseImageUrls(res.data.data)
         });
     } else{
+      console.log("Submitting federated....");
         axios({
           method: 'post',
           url: `${serverURL.trim()}/make_federated_request/${workerSelect.trim()}`, // this should be set from the form
@@ -195,6 +199,8 @@ function Sidebar({setResponseImageUrls, responseImageUrls, selectedImageUrl,
 
         <label>Secondary URL:</label>
         <input type="text" placeholder="Enter secondary URL" onChange={e => handleSecondaryURLChange(e.target.value)} value={secondaryWorkerURL}/>
+
+        Federated Mode: <SliderToggleButton isOn={isFederatedMode} setIsOn={setIsFederatedMode} />
       </div>
 
       <div className="dropdown">

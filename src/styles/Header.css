@@ -3,7 +3,7 @@
     color: white;
     height: 4.7vh;
     /* z-index: 1; */
-    margin-bottom: 20px;
+    padding-bottom: 5px;
 }
 
 .hidden_file_input{

@@ -1,6 +1,5 @@
 import Slider from "../Slider";
 import ColorPicker from "../ColorPicker";
-import ToggleButton from "../ToggleButton";
 import { useState } from "react";
 
 const ToolbarDrawing= ({toolbarStore, setToolbarStore}) => {
