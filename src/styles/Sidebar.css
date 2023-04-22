@@ -2,17 +2,25 @@
   /* background-color: #f2f2f2; */
   background-color: #0e0d0d;
   color: white;
-
-  padding: 20px;
-  width: 25%;
   margin: 0;
-  /* position: fixed; */
+  position: absolute;
   right: 0;
-  height: 88vh;
    overflow-y: auto;
    z-index: 1;
 }
 
+.sidebar-full {
+  padding: 20px;
+  width: 25%;
+  height: 88vh;
+}
+
+.sidebar-closed {
+  height: 92vh;
+  width: 2%;
+  right: 0;
+  padding: 0;
+}
 .input-fields {
   display: flex;
   flex-direction: column;
@@ -76,6 +84,14 @@
   justify-content: space-between;
 }
 
+.sidebar-hidden-toggle{
+  width:100%;
+  height:90%;
+  background-color:"white"; 
+  margin: 0; 
+  padding: 0;
+}
+
 .buttons button {
   padding: 10px;
   border: none;
@@ -95,4 +111,49 @@
 
 .selected-image{
   border: 2px solid black;
+}
+
+
+.sidebar_open_arrow {
+    fill: rgb(169, 169, 169);
+    font-size: 80px;
+    /* width: 25%; */
+    /* width: 40px; */
+    height: 100%;
+    text-align: center;
+    display: block;
+    margin: 5px 5px;
+    padding-bottom: None;
+
+    /* fill: white; */
+    width: 33px;
+    
+    /* height: 50vh; */
+    /* font-weight: bold; */
+    /* stroke-width: 100px; */
+}
+
+
+.sidebar_close_arrow{
+    rotate: y 180deg;
+    fill: rgb(169, 169, 169);
+    /* font-size: 30px; */
+    /* width: 25%; */
+    /* width: 10px; */
+    height: 100%;
+    text-align: center;
+    display: block;
+    margin: 5px 5px;
+
+    /* fill: white; */
+    width: 20px;
+    /* height: 50vh; */
+    /* font-weight: bold; */
+    /* stroke-width: 100px; */
+}
+
+.sidebar-close-arrow-container{
+
+    background: #008CBA;
+    padding: 3px 0;
 }

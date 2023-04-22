@@ -6,18 +6,23 @@ import axios from 'axios'
 import ImageGrid from './ImageGrid';
 import Base64ImageInput from './Base64ImageInput';
 import SliderToggleButton from '../SliderToggleButton';
+import ImageMaskInput from './ImageMaskInput';
+
+import {ReactComponent as OpenArrow}  from "../../assets/open-arrow.svg";
 
 function Sidebar({setResponseImageUrls, responseImageUrls, selectedImageUrl, 
   canvas, setCanvas, selectedImageDetails}) {
 
   const [workerInfo, setWorkerInfo] = useState([])
   const [serverURL, setServerURL] = useState("http://localhost:3003")
-  const [apiToken, setApiToken ] = useState("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2ODE1MTcwOTcsImlhdCI6MTY4MDY1MzA5NywiaWQiOjZ9.fmrte8_1G1QpDfVS8H3se8ug4ZUst_ys6NfOuUaKmM8")
+  const [apiToken, setApiToken ] = useState("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2ODI0MTE1MTUsImlhdCI6MTY4MTU0NzUxNSwiaWQiOjZ9.rFdhzFvcbde668qZ3NY3I-kVG49XiuzOymmd1b1v1wA")
   const [secondaryWorkerURL, setSecondaryWorkerURL] = useState("")
   // const [secondaryWorkerURL, setSecondaryWorkerURL] = useState("http://localhost:3009")
   const [workerAddress, setWorkerAddress] = useState("")
 
   const [isFederatedMode, setIsFederatedMode] = useState(false);
+
+  const [showSidebar, setShowSidebar] = useState(false);
 
   const [workerOptions, setWorkerOptions] = useState([])
   const [jobOptions, setJobOptions] = useState([])
@@ -27,6 +32,9 @@ function Sidebar({setResponseImageUrls, responseImageUrls, selectedImageUrl,
   const [workerSelect, setWorkerSelect] = useState(null)
 
   const [finalImageUrl, setFinalImageUrl] = useState(selectedImageUrl);
+
+
+  const [mask, setMask] = useState(null);
 
   useEffect(() => {
 
@@ -133,14 +141,14 @@ function Sidebar({setResponseImageUrls, responseImageUrls, selectedImageUrl,
 
     let object = {};
     formData.forEach(function(value, key){
-      if (key == "image_encoded"){
+      if (key == "image_encoded" || key=="image_mask_encoded"){
         value = value.split(",")[1] //remove data descriptor
         object[key] = value;
       } else{
         object[key] = value;
       }
-      // console.log(key, value)
     });
+    console.log(object)
 
     if(!isFederatedMode){
     console.log("Submitting conventional....");
@@ -186,7 +194,16 @@ function Sidebar({setResponseImageUrls, responseImageUrls, selectedImageUrl,
   }
 
   return (
-    <div className="sidebar">
+    <div className={showSidebar ? 'sidebar sidebar-full': 'sidebar sidebar-closed'}>
+    {showSidebar ? 
+      <div>
+      <div className="sidebar-close-arrow-container"
+        onClick={() => setShowSidebar(false)} 
+      >
+      <OpenArrow
+          className="sidebar_close_arrow"
+       /> 
+      </div>
       <div className="input-fields">
         <label>URL:</label>
         <input type="text" placeholder="Enter URL" onChange={(e) => setServerURL(e.target.value)} value={serverURL} />
@@ -272,6 +289,13 @@ function Sidebar({setResponseImageUrls, responseImageUrls, selectedImageUrl,
                     <input type='hidden' value={finalImageUrl} name={i} />
                   </div>
 
+                case "mask<b64>":
+                  return <div>
+                    <label>{i}</label>
+                  <ImageMaskInput mask={mask} setMask={setMask}  />
+                  <input type='hidden' value={mask} name={i} />
+                  </div>
+                
                 // more types and more type support
               }
             })}
@@ -286,6 +310,13 @@ function Sidebar({setResponseImageUrls, responseImageUrls, selectedImageUrl,
           <ImageGrid imageUrls={responseImageUrls} 
           canvas={canvas} setCanvas={setCanvas}  selectedImageDetails={selectedImageDetails}/>
     </div>
+  : 
+  <div onClick={() => setShowSidebar(true)} className="sidebar-hidden-toggle">
+    <OpenArrow
+        className="sidebar_open_arrow"/>
+  </div>}
+  
+  </div>
   )} 
       
 

@@ -35,6 +35,12 @@ export const ToolbarEffects = ({toolbarStore, setToolbarStore}) => {
   return (
     <div className="toolbar_settings">
 
+      <div className="toolbar__card">
+        WARNING!
+        <hr />
+        ⚠ SHOULD ONLY BE USED AS POSTPROCESSING!
+      </div>
+
       <div className="toolbar__content">
         <Slider
           title="Brightness"

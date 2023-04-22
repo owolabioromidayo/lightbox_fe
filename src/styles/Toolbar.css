@@ -41,6 +41,16 @@
     /* border-radius: 50px; */
 
   }
+
+  .toolbar__card{
+    height: 10vh;
+    background-color: #ec7358;
+    color: black;
+    border-radius: 20px;
+    margin: 15px 20px;
+    padding: 10px;
+    font-weight: bold;
+  }
   
 .toolbar__content {
       padding: 2.34375vw 1.5625vw;
@@ -48,7 +58,7 @@
       grid-row-gap: 2.34375vw;
       font-size: .95em;
       margin: none;
-      /* width: 5%; */
+
       background-color: #171716;
       color: white;
     }
@@ -129,4 +139,16 @@
   height: 95vh;
    overflow-y: auto;
    z-index: 1;
+}
+
+.colors__grid{
+  width: 100%
+}
+
+
+#image_mask_canv{
+  /* width: 150px;
+  height: 150px; */
+  padding: 0;
+  margin: 0;
 }

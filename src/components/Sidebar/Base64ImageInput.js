@@ -27,7 +27,7 @@ function Base64ImageInput({ selectedImageUrl, finalImageUrl, setFinalImageUrl })
 
   return (
     <div className="base64-image-input">
-      <img src={finalImageUrl} alt="Selected image" className="selected-image" width="256" height="256" />
+      <img src={selectedImageUrl} alt="Selected image" className="selected-image" width="256" height="256" />
 
         <div className="confirm-controls">
           <button onClick={handleConfirm}>Confirm</button>

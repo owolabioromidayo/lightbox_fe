@@ -7,10 +7,10 @@ import {ReactComponent as Pencil}  from "../../assets/pencil.svg";
 import {ReactComponent as Adjust}  from "../../assets/adjust.svg";
 import {ReactComponent as Text}  from "../../assets/text.svg";
 import {ReactComponent as Pointer}  from "../../assets/pointer.svg";
+import {ReactComponent as Eraser}  from "../../assets/eraser.svg";
 
 import { useState } from "react";
 
-import { Flex, Center } from "@chakra-ui/react";
 import ToolbarDrawing from "./ToolbarDrawing";
 import ToolbarText from "./ToolbarText";
 import ToolbarEffects from "./ToolbarEffects";
@@ -19,48 +19,13 @@ import ToolbarEffects from "./ToolbarEffects";
 import "../../styles/Toolbar.css";
 
 const Toolbar = ({toolbarStore, setToolbarStore, setCropMode}) => {
-    // const [showSettings, setShowSettings] = useState({
-    //     effects : false
-    // })
-
-    const [showEffects, setShowEffects] = useState(false);
-    const [showDrawing, setShowDrawing] = useState(false);
-    const [showText, setShowText] = useState(false);
 
     const [settingChoice, setSettingChoice] = useState("");
-// 
-
-    // const handleSettingsClick = (keyToSetTrue) => {
-    //     // setShowSettings((settings) => {
-
-    //     //     for (const key in settings){
-    //     //         if(key == keyToSetTrue){
-    //     //             settings[key] = !settings[key];
-    //     //         }else{
-    //     //             settings[key] = false; 
-    //     //         }
-
-    //     //     }
-    //     //     console.log(settings)
-    //     //     return settings;
-    //     // } )
-
-    //     setShowEffects(!showEffects)
-    // }
 
     const setShowSettings = (choice) => {
-        //make everything false
-        // setShowEffects(false);
-        // setShowDrawing(false);
-        // setShowText(false);
-
-        // switch (choice){
-        //     case "effects":
-        //         setShowEffects(!showEffects);
-        //     case "drawing":
-        //         setShowDrawing(!showDrawing);
-        //     case "text":
-        //         setShowText(!showText);
+        if (settingChoice != "crop"){
+            setCropMode(false);
+        }
 
         if (settingChoice === choice){
             setSettingChoice("")
@@ -70,11 +35,11 @@ const Toolbar = ({toolbarStore, setToolbarStore, setCropMode}) => {
 
     }
 
+    //select and deselect are different things. need to cater to that or BUGS
     const handleCropClick = () => {
-        setCropMode(cp => !cp);
+        setCropMode(true);
         setShowSettings("crop");
-        setToolbarStore({...toolbarStore, 
-            isSelectionMode: !toolbarStore.isSelectionMode, isDrawingMode: false})
+        setToolbarStore({...toolbarStore, isSelectionMode: true, isDrawingMode: false})
     }
     const handlePointerClick = () => {
         setToolbarStore({...toolbarStore, isDrawingMode: false, isSelectionMode: true})
@@ -82,8 +47,16 @@ const Toolbar = ({toolbarStore, setToolbarStore, setCropMode}) => {
     }
 
     const handlePencilClick = () => {
-        setToolbarStore({...toolbarStore, isDrawingMode: !toolbarStore.isDrawingMode, isSelectionMode: false})
+        setToolbarStore({...toolbarStore, isDrawingMode: true, isSelectionMode: false, 
+        drawingStore: {...toolbarStore.drawingStore, isErasing: false}})
         setShowSettings("drawing")
+        //something for drawing option modal
+    }
+
+    const handleEraserClick = () => {
+        setToolbarStore({...toolbarStore, isDrawingMode: true, isSelectionMode: false, 
+        drawingStore: {...toolbarStore.drawingStore, isErasing: true}})
+        setShowSettings("erasing")
         //something for drawing option modal
     }
 
@@ -94,13 +67,17 @@ const Toolbar = ({toolbarStore, setToolbarStore, setCropMode}) => {
                     <Pointer 
                     className={`toolbar__icon toolbar__top_icon ${settingChoice == "pointer" ? "toolbar__icon_active" : ""}`}/>
                 </div>
-                <div onClick={handleCropClick}>
+                {/* <div onClick={handleCropClick}>
                     <Crop 
                     className={`toolbar__icon ${settingChoice == "crop" ? "toolbar__icon_active" : ""}`}/>
-                </div>
+                </div> */}
                 <div onClick={handlePencilClick}>
                     <Pencil 
                     className={`toolbar__icon ${settingChoice == "drawing" ? "toolbar__icon_active" : ""}`}/>
+                </div>
+                <div onClick={handleEraserClick}>
+                    <Eraser 
+                    className={`toolbar__icon ${settingChoice == "erasing" ? "toolbar__icon_active" : ""}`}/>
                 </div>
                 <div onClick={() => setShowSettings("effects")}>
                     <Adjust 
@@ -112,21 +89,6 @@ const Toolbar = ({toolbarStore, setToolbarStore, setCropMode}) => {
                 </div>
         </div>
 
-        {/* { showEffects && <ToolbarEffects toolbarStore={toolbarStore} setToolbarStore={setToolbarStore} />}
-        { showDrawing && <ToolbarDrawing toolbarStore={toolbarStore} setToolbarStore={setToolbarStore} />}
-        { showText && <ToolbarText toolbarStore={toolbarStore} setToolbarStore={setToolbarStore} />} */}
-
-        {/* {() => {switch(settingChoice){
-            case "":
-                return <></>
-            case "text":
-                return <ToolbarText toolbarStore={toolbarStore} setToolbarStore={setToolbarStore} />
-            case "drawing":
-                return <ToolbarDrawing toolbarStore={toolbarStore} setToolbarStore={setToolbarStore} />
-            case "effects":
-                return <ToolbarEffects toolbarStore={toolbarStore} setToolbarStore={setToolbarStore} />
-
-        }} } */}
         {
         settingChoice == "text" ?
          <ToolbarText toolbarStore={toolbarStore} setToolbarStore={setToolbarStore} /> :

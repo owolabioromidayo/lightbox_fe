@@ -1,6 +1,7 @@
 import Slider from "../Slider";
 import ColorPicker from "../ColorPicker";
 import { useState } from "react";
+import SliderToggleButton from "../SliderToggleButton";
 
 const ToolbarDrawing= ({toolbarStore, setToolbarStore}) => {
 
@@ -10,6 +11,7 @@ const ToolbarDrawing= ({toolbarStore, setToolbarStore}) => {
        setToolbarStore(newStore)
   }
   return (
+
     <div className="toolbar__content">
       <ColorPicker
         title="Colors"
@@ -31,12 +33,16 @@ const ToolbarDrawing= ({toolbarStore, setToolbarStore}) => {
         max={100}
         callback = {value => setDrawingProperty("opacity", value/100)}
       />
-      {/* <ToggleButton
-        title="Straight Line"
-        checked={toolbarStore.drawingStore.isLineStraight}
-        callback={() =>setToolbarStore(
+      {/* <p>Eraser</p>
+      <SliderToggleButton
+        isOn={toolbarStore.drawingStore.isErasing}
+        setIsOn={() =>{
+          
+          setToolbarStore(
           {...toolbarStore, drawingStore:
-             {...toolbarStore.drawingStore, isLineStraight: !toolbarStore.drawingStore.isLineStraight } })}
+             {...toolbarStore.drawingStore, isErasing: !toolbarStore.drawingStore.isErasing } })
+            }
+          }
       /> */}
     </div>
   )

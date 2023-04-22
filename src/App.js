@@ -6,7 +6,6 @@ import Header from "./components/Header/Header";
 import Toolbar from "./components/Toolbar/Toolbar";
 import { fabric } from "fabric";
 import Sidebar from "./components/Sidebar/Sidebar";
-import ImageCropper from "./components/ImageCropper";
 
 function App() {
 
@@ -19,15 +18,32 @@ function App() {
 
   const canvasRef = useRef(null);
   const [canvas, setCanvas] = useState(null);
+  // const canvasStateRef  = useRef(canvas);
+
+  // const _setCanvas = data => {
+  //   canvasStateRef.current = data;
+  //   // setCanvas(data)
+  // } 
+
   const [history, setHistory] = useState([]);
+
+  const [isDrawing, setIsDrawing] = useState(false);
+
+  let tCount = 0;
+
+  let rect = null;
+  let sX = 0;
+  let sY = 0;
 
   const [toolbarStore, setToolbarStore] = useState({
     isDrawingMode: false,
+    isCroppingMode: false,
     // isTextMode: false,
     drawingStore: {
       lineWidth: 100,
       opacity: 1,
       colorCode: "#000000",
+      isErasing: false
       // isLineStraight: false
     },
     effectsStore : {
@@ -44,12 +60,30 @@ function App() {
     },
     textStore: {}
   })
+  
 
 
 //not working yet
-function handleUndo() {
-  if (history.length > 1) {
-    const newHistory = history.slice(0, history.length - 1);
+  function handleUndo() {
+    if (history.length > 1) {
+      const newHistory = history.slice(0, history.length - 1);
+      setHistory(newHistory);
+      const lastCanvasJSON = newHistory[newHistory.length - 1];
+      const newCanvas = new fabric.Canvas('canvas');
+      newCanvas.loadFromJSON(lastCanvasJSON, () => {
+        canvas.clear();
+        canvas.loadFromJSON(lastCanvasJSON, () => {
+          canvas.renderAll();
+        });
+      });
+    }
+  }
+
+  function handleRedo() {
+    if (history.length < 2) {
+      return;
+    }
+    const newHistory = [...history, history[history.length - 1]];
     setHistory(newHistory);
     const lastCanvasJSON = newHistory[newHistory.length - 1];
     const newCanvas = new fabric.Canvas('canvas');
@@ -60,23 +94,6 @@ function handleUndo() {
       });
     });
   }
-}
-
-function handleRedo() {
-  if (history.length < 2) {
-    return;
-  }
-  const newHistory = [...history, history[history.length - 1]];
-  setHistory(newHistory);
-  const lastCanvasJSON = newHistory[newHistory.length - 1];
-  const newCanvas = new fabric.Canvas('canvas');
-  newCanvas.loadFromJSON(lastCanvasJSON, () => {
-    canvas.clear();
-    canvas.loadFromJSON(lastCanvasJSON, () => {
-      canvas.renderAll();
-    });
-  });
-}
 
   const handleCanvasChange = () => {
     // if (canvas){
@@ -88,38 +105,122 @@ function handleRedo() {
     // }
   }
 
+  
+  const cropImage = (canvas, rect) => {
+    // Get crop rectangle coordinates
+    const cropRect = rect.getBoundingRect();
+    const left = cropRect.left - 30;
+    const top = cropRect.top - 30;
+    // const width = cropRect.width -10;
+    // const height = cropRect.height - 10;
+    const width = 512
+    const height = 512
+
+    // Create cropped canvas and image
+    const croppedImageDataUrl = canvas.toDataURL({
+        left: left,
+        top: top,
+        width: width,
+        height: height,
+        scaleX: 1 / canvas.getZoom(),
+        scaleY: 1 / canvas.getZoom(),
+      })
+    
+    console.log(cropMode, "now??")
+    // if (cropMode){
+      console.log("finally")
+      setSelectedImageDetails({x: left, y: top})
+      setSelectedImageUrl(croppedImageDataUrl);
+    // }
+  };
+
 
   useEffect(() => {
     let container = canvasRef.current.parentNode
     let newCanvas = new fabric.Canvas(canvasRef.current, {
               height: container.offsetHeight,
               width: container.offsetWidth,
-              // height: 700,
-              // width: 700,
-              backgroundColor: '#d8d2db',
-              isDrawingMode: false,
-              freeDrawingBrush: {
-                  color: "black",
-                  lineWidth: 10
-               }
+              backgroundColor: 'white',
+              isDrawingMode: false
           }) 
 
+    newCanvas.renderAll();
+    // newCanvas.on('mouse:down', handleMouseDown(newCanvas));
+    // newCanvas.on('mouse:up', handleMouseUp(newCanvas));
 
-    //   window.addEventListener('keydown', function(e) {
+    // window.addEventListener('keydown', function(e) {
     //   if (e.key === "Delete") { 
     //     let activeObject = newCanvas.getActiveObject();
     //     if (activeObject) {
-    //       console.log(activeObject)
     //       //TODO: history record
     //       newCanvas.remove(activeObject);
     //     }
     //   }
     // });
 
+    window.addEventListener('keydown', function(e) {
+        if (e.key === "Delete") { 
+          // console.log("Deleting")
+          // const canv = canvasStateRef.current;
+          // console.log(canv)
+
+          // if (canv){
+          //   console.log("Deleting actvie object")
+
+          //   let activeObject = canv.getActiveObject();
+          //   if (activeObject) {
+          //     console.log("Deleting actvie2 object")
+          //     //TODO: history record
+              setCanvas( (canvas) => {
+
+                console.log(canvas);
+                console.log(typeof canvas);
+                let activeObject = canvas.getActiveObject();
+                if (activeObject){
+                  canvas.remove(activeObject)
+                  canvas.discardActiveObject().renderAll();
+                }
+                return canvas
+              })
+            }
+            // setCanvas(canv);
+        // }
+        // }
+      });
+
+    // _setCanvas(newCanvas);
     setCanvas(newCanvas);
     setHistory([newCanvas.toJSON()]);
   }, []);
 
+
+  useEffect(() => {
+    // _setCanvas(canvas)
+
+    if (canvas != null && tCount == 0){
+      canvas.on('mouse:down', handleMouseDown);
+      canvas.on('mouse:up', handleMouseUp);
+
+      canvas.on('path:created', (event) => {
+      setCanvas(() => {
+        let item = event.path;
+        item.selectable = false;
+        canvas.add(item);
+        // canvas.item(0).selectable = false;
+
+        console.log("path created")
+
+        //can do some history recording here
+        return canvas
+      })
+    });
+
+    }
+    
+  },[canvas])
+
+
+  
 
   useEffect(() => {
     // if (canvas) {
@@ -136,6 +237,7 @@ function handleRedo() {
 
   useEffect(() => {
     if(canvas){
+      console.log("updaing canv")
       // console.log(toolbarStore)
       // const newCanvas =  new fabric.Canvas(canvasRef.current);
 
@@ -163,16 +265,24 @@ function handleRedo() {
         canvas.isDrawingMode = toolbarStore.isDrawingMode;
         canvas.selection = toolbarStore.isSelectionMode;
         
+      
         canvas.freeDrawingBrush.color = drawingProperties.colorCode;
         canvas.freeDrawingBrush.width = drawingProperties.lineWidth;
         canvas.freeDrawingBrush.opacity = drawingProperties.opacity;
-        // canvas.freeDrawingBrush.straight = drawingProperties.isLineStraight;
 
-        canvas.backgroundImageFilters = filters;
-        // canvas.renderAll();
-        canvas.setBackgroundImage(canvas.toDataURL(), canvas.renderAll.bind(canvas), {
-          filters: filters
-        });
+        if (toolbarStore.drawingStore.isErasing){
+
+          canvas.freeDrawingBrush.color = '#ffffff';
+          canvas.freeDrawingBrush.width = drawingProperties.lineWidth;
+          canvas.freeDrawingBrush.opacity = drawingProperties.opacity;
+        }
+        canvas.freeDrawingBrush.straight = drawingProperties.isLineStraight;
+
+        // canvas.backgroundImageFilters = filters;
+        // // canvas.renderAll();
+        // canvas.setBackgroundImage(canvas.toDataURL(), canvas.renderAll.bind(canvas), {
+        //   filters: filters
+        // });
 
        
         if (textStore.textObj){
@@ -187,13 +297,107 @@ function handleRedo() {
     }
   }, [toolbarStore])
 
-  // useEffect( ()=> {
-  //   setCanvas(() => {
 
-  //     canvas.freeDrawingBrush.width = drawingStore.lineWidth;
-  //     canvas.freeDrawingBrush.color = drawingStore.colorCode; 
-  //   })
-  // }, [drawingStore])
+
+
+  const handleMouseUp = () => {
+    // if (canvas){
+
+    // const rect = canvas.getObjects()[0];
+    // if (!toolbarStore.isCroppingMode){
+        setIsDrawing(false);
+        canvas.off('mouse:move', handleMouseMove);
+      //  setTimeout(canvas.on('mouse:down', handleMouseDown), 200)
+       canvas.on('mouse:down', handleMouseDown)
+    // }
+    console.log("Mouse up")
+    console.log(rect)
+     cropImage(canvas, rect);
+    // }
+  };
+
+  const handleMouseMove = e => {
+    if (isDrawing){
+      const width = e.e.pageX - sX;
+      const height = e.e.pageY - sY;
+      rect.set({width: width, height: height})
+      rect.setCoords();
+
+      canvas.renderAll();
+    }
+  };
+  
+  const handleMouseDown = e => {
+      setIsDrawing(true);
+      
+      const canv = canvasRef.current;
+      const container = canv.getBoundingClientRect();
+      sX = e.e.pageX - container.left;
+      sY = e.e.pageY - container.top;
+
+
+      rect = new fabric.Rect({
+        left: sX,
+        top: sY,
+        width: 0,
+        height: 0,
+        fill: 'rgba(0, 0, 0, 0.5)',
+        stroke: '#ccc',
+        strokeWidth: 2,
+        selectable: false,
+      });
+      rect.setControlsVisibility({
+        mt: true,
+        mb: true,
+        ml: true,
+        mr: true,
+        tl: true,
+        tr: true,
+        bl: true,
+        br: true,
+        mtr: true
+      });
+      rect.setCoords();
+
+      // if (canvas){
+        // console.log("setting handlers")
+        canvas.on('mouse:move', handleMouseMove);
+        canvas.off('mouse:down', handleMouseDown);
+      // }
+  };
+
+
+  useEffect(() => {
+  
+    if(typeof(imageUrl) == 'string'){
+      fabric.Image.fromURL(imageUrl, function(oImg) {
+          const container = canvasRef.current.parentNode;
+
+          // console.log(canvasSize.width, canvasSize.height);
+          oImg.scaleToHeight(container.offsetHeight / 2);
+          oImg.scaleToWidth(container.offsetWidth/ 2);
+          oImg.selectable = true;
+
+          let newCanv = canvas.add(oImg).renderAll();
+
+
+          // newCanv.on('mouse:down', handleMouseDown);
+          // newCanv.on('mouse:up', handleMouseUp);
+          // newCanv.on()
+          
+          setCanvas(newCanv);
+
+
+          
+
+
+      }
+      );
+    }
+
+  }, [imageUrl])
+
+
 
   return (
     <>
@@ -220,21 +424,12 @@ function handleRedo() {
         />
 
         <Canvas 
-         imageUrl={imageUrl} 
-         canvas={canvas} 
-         setCanvas={setCanvas} 
+        // style={{width:"90%"}}
          canvasRef={canvasRef}
-         setSelectedImageUrl={setSelectedImageUrl} 
-         setSelectedImageDetails={setSelectedImageDetails}
-         handleCanvasChange={handleCanvasChange}
-         toolbarStore={toolbarStore}
-         cropMode={cropMode}
          />
 
-        {/* <ImageCropper /> */}
-
         <Sidebar 
-          style={{width: "200px"}} 
+          // style={{width: "200px"}} 
           setResponseImageUrls={setResponseImageUrls} 
           responseImageUrls={responseImageUrls} 
           selectedImageUrl={selectedImageUrl}
@@ -247,6 +442,7 @@ function handleRedo() {
     </>
 
   );
+
 }
 
 export default App;
