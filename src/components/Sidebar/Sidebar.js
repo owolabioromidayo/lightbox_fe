@@ -15,7 +15,7 @@ function Sidebar({setResponseImageUrls, responseImageUrls, selectedImageUrl,
 
   const [workerInfo, setWorkerInfo] = useState([])
   const [serverURL, setServerURL] = useState("http://localhost:3003")
-  const [apiToken, setApiToken ] = useState("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2ODI0MTE1MTUsImlhdCI6MTY4MTU0NzUxNSwiaWQiOjZ9.rFdhzFvcbde668qZ3NY3I-kVG49XiuzOymmd1b1v1wA")
+  const [apiToken, setApiToken ] = useState("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2ODMwMzMwMzAsImlhdCI6MTY4MjE2OTAzMCwiaWQiOjd9.oNCoNxEGS8_qLv5EFE2PaxEuDijrvwBVeBdFRvw887o")
   const [secondaryWorkerURL, setSecondaryWorkerURL] = useState("")
   // const [secondaryWorkerURL, setSecondaryWorkerURL] = useState("http://localhost:3009")
   const [workerAddress, setWorkerAddress] = useState("")
