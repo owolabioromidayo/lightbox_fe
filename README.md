@@ -3,11 +3,14 @@
 Frontend Photo-Editing Application for Federated Queueing Platform
 
 
-#Other sections of the project are:
+### Other sections of the project are:
 - Queue Server : [Link](https://github.com/owolabioromidayo/lightbox_queue_server)
 - GPU Client : [Link](https://github.com/owolabioromidayo/lightbox_gpu_client)
 
 
+
+###  Screenshots
+<br />
 
 <img src="assets/5.png?raw=true" />
 <br />
