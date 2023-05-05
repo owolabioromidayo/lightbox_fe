@@ -157,3 +157,19 @@
     background: #008CBA;
     padding: 3px 0;
 }
+
+#refresh-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-top: 10px;
+}
+
+
+#sidebar-refresh-btn{
+  background-color: gray;
+  font-size: 30px;
+  margin: auto;
+  border-radius: 10px;
+}

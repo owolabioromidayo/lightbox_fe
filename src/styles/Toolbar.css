@@ -152,3 +152,15 @@
   padding: 0;
   margin: 0;
 }
+
+
+#prev-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%
+}
+
+#preview-effects-btn{
+  margin: auto;
+}

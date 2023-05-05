@@ -36,72 +36,54 @@ function Sidebar({setResponseImageUrls, responseImageUrls, selectedImageUrl,
 
   const [mask, setMask] = useState(null);
 
-  useEffect(() => {
 
+  const refreshInfo = () => {
+      console.log("refreshing data...")
+      const extractJobInfo = (data) => {
+              let fWorker = "" 
+              let fJob = ""
+              try{
+                fWorker= Object.keys(data)[0]
+                fJob = Object.keys(data[Object.keys(data)[0]].models)[0]
+                setJobInfo(data[fWorker].models[fJob])
 
-    //make a request to localhost 3000 to get worker information
-    if (serverURL && apiToken)
-    {
-      axios({
-        method: 'get',
-        url: `${serverURL}/workers`, // this should be set from the form
-      })
-        .then(function (res) {
-          console.log(res.data)
-          let fWorker = Object.keys(res.data)[0]
-          let fJob  = Object.keys(res.data[Object.keys(res.data)[0]].models)[0]
+              } catch {
+                setJobInfo({})
+                setJobOptions([])
+              }
 
-          setWorkerOptions(Object.keys(res.data))        
-          setWorkerInfo(res.data)
-          setWorkerSelect(fWorker)
-          setJobSelect(fJob)
-          setSecondaryWorkerURL(serverURL);
+              setWorkerOptions(Object.keys(data))        
+              setWorkerInfo(data)
+              setWorkerSelect(fWorker)
+              setJobSelect(fJob)
 
-          // setIsFederatedMode(false);
+      }
 
-          setJobInfo(res.data[fWorker].models[fJob])
-          //set dropdown to first element, create the dropdown and map it to another set
-          // of jobs and generated fields
-        });
+      let url = isFederatedMode ? secondaryWorkerURL : serverURL 
+
+      if (url && apiToken){
+          axios({
+              method: 'get',
+              url: `${url}/workers`, 
+            })
+            .then(function (res) {
+                extractJobInfo(res.data)
+            });
+      }
+
     }
+
+    
+  
+
+  useEffect(() => {
+       refreshInfo()
   }, [serverURL, apiToken])
 
   useEffect(() => {
 
     const delayDebounceFn = setTimeout(() => {
-      // Make HTTP request here with searchTerm
-      //make a request to localhost 3000 to get worker information
-      if (serverURL && apiToken){
-        axios({
-          method: 'get',
-          url: `${secondaryWorkerURL}/workers`, // this should be set from the form
-        })
-          .then(function (res) {
-            console.log(res.data)
-            let fWorker = "" 
-            let fJob = ""
-            try{
-              fWorker= Object.keys(res.data)[0]
-              fJob = Object.keys(res.data[Object.keys(res.data)[0]].models)[0]
-              setJobInfo(res.data[fWorker].models[fJob])
-
-            } catch {
-
-              setJobInfo({})
-              setJobOptions([])
-            }
-
-            setWorkerOptions(Object.keys(res.data))        
-            setWorkerInfo(res.data)
-            setWorkerSelect(fWorker)
-            setJobSelect(fJob)
-            
-            // setIsFederatedMode(true);
-
-            //set dropdown to first element, create the dropdown and map it to another set
-            // of jobs and generated fields
-          });
-      }
+        refreshInfo()
     }, 1000);
 
   return () => clearTimeout(delayDebounceFn);
@@ -217,8 +199,12 @@ function Sidebar({setResponseImageUrls, responseImageUrls, selectedImageUrl,
         <label>Secondary URL:</label>
         <input type="text" placeholder="Enter secondary URL" onChange={e => handleSecondaryURLChange(e.target.value)} value={secondaryWorkerURL}/>
 
-        Federated Mode: <SliderToggleButton isOn={isFederatedMode} setIsOn={setIsFederatedMode} />
+        <div id="refresh-container"> 
+          Federated Mode: &nbsp; &nbsp; <SliderToggleButton isOn={isFederatedMode} setIsOn={setIsFederatedMode} />
+          <button id='sidebar-refresh-btn' onClick={refreshInfo}>♻</button>
+        </div>
       </div>
+
 
       <div className="dropdown">
         <p> Worker Choices from connected server</p>

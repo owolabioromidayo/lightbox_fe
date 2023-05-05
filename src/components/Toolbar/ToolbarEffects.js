@@ -42,7 +42,9 @@ export const ToolbarEffects = ({toolbarStore, setToolbarStore, clearCanvasBackgr
       </div>
 
       {/* <button onClick={clearCanvasBackground}>RESET BACKGROUND</button> */}
-      <button onClick={saveEffectsImage}>PREVIEW EFFECTS</button>
+      <div id='prev-container'>
+        <button id='preview-effects-btn' onClick={saveEffectsImage}>VIEW EFFECTS</button>
+      </div>
 
       <div className="toolbar__content">
         <Slider
