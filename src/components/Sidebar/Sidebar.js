@@ -15,10 +15,10 @@ function Sidebar({setResponseImageUrls, responseImageUrls, selectedImageUrl,
 
   const [workerInfo, setWorkerInfo] = useState([])
   const [serverURL, setServerURL] = useState("http://localhost:3003")
-  const [apiToken, setApiToken ] = useState("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2ODMwMzMwMzAsImlhdCI6MTY4MjE2OTAzMCwiaWQiOjd9.oNCoNxEGS8_qLv5EFE2PaxEuDijrvwBVeBdFRvw887o")
+  const [apiToken, setApiToken ] = useState("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2ODM5NTk2ODIsImlhdCI6MTY4MzA5NTY4MiwiaWQiOjJ9.yMYxHrcju90GTt3UzBRp1jRutFYbnhF2XYbQKudc7nE")
   const [secondaryWorkerURL, setSecondaryWorkerURL] = useState("")
   // const [secondaryWorkerURL, setSecondaryWorkerURL] = useState("http://localhost:3009")
-  const [workerAddress, setWorkerAddress] = useState("")
+  // const [workerAddress, setWorkerAddress] = useState("")
 
   const [isFederatedMode, setIsFederatedMode] = useState(false);
 
@@ -211,8 +211,8 @@ function Sidebar({setResponseImageUrls, responseImageUrls, selectedImageUrl,
         <label>Token:</label>
         <input type="text" placeholder="Enter token" onChange={(e) => setApiToken(e.target.value)} value={apiToken} />
 
-        <label>Specific Worker Address:</label>
-        <input type="text" placeholder="Enter worker address " onChange={(e) => setWorkerAddress(e.target.value)} value={workerAddress} />
+        {/* <label>Specific Worker Address:</label>
+        <input type="text" placeholder="Enter worker address " onChange={(e) => setWorkerAddress(e.target.value)} value={workerAddress} /> */}
 
         <label>Secondary URL:</label>
         <input type="text" placeholder="Enter secondary URL" onChange={e => handleSecondaryURLChange(e.target.value)} value={secondaryWorkerURL}/>

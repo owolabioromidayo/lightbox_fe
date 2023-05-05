@@ -61,6 +61,27 @@ function App() {
     textStore: {}
   })
   
+function clearCanvasBackground() {
+  if (canvas) {
+    canvas.setBackgroundImage(null);
+    canvas.setBackgroundColor('white');
+    canvas.renderAll();
+  }
+}
+
+function saveEffectsImage(){
+    if (canvas){
+    let bgURL = canvas.backgroundImage.toDataURL();
+
+    var image = new Image();
+    image.src = bgURL;
+
+    let w = window.open("",'_blank');
+    w.document.write(image.outerHTML);
+    w.document.close(); 
+
+  }
+}
 
 
 //not working yet
@@ -126,9 +147,7 @@ function App() {
         scaleY: 1 / canvas.getZoom(),
       })
     
-    console.log(cropMode, "now??")
     // if (cropMode){
-      console.log("finally")
       setSelectedImageDetails({x: left, y: top})
       setSelectedImageUrl(croppedImageDataUrl);
     // }
@@ -237,7 +256,6 @@ function App() {
 
   useEffect(() => {
     if(canvas){
-      console.log("updaing canv")
       // console.log(toolbarStore)
       // const newCanvas =  new fabric.Canvas(canvasRef.current);
 
@@ -278,11 +296,12 @@ function App() {
         }
         canvas.freeDrawingBrush.straight = drawingProperties.isLineStraight;
 
-        // canvas.backgroundImageFilters = filters;
-        // // canvas.renderAll();
-        // canvas.setBackgroundImage(canvas.toDataURL(), canvas.renderAll.bind(canvas), {
-        //   filters: filters
-        // });
+        canvas.backgroundImageFilters = filters;
+        // canvas.renderAll();
+        clearCanvasBackground()
+        canvas.setBackgroundImage(canvas.toDataURL(), canvas.renderAll.bind(canvas), {
+          filters: filters
+        });
 
        
         if (textStore.textObj){
@@ -421,6 +440,8 @@ function App() {
           toolbarStore={toolbarStore} 
           setToolbarStore={setToolbarStore}
           setCropMode={setCropMode}
+          clearCanvasBackground= {clearCanvasBackground}
+          saveEffectsImage={saveEffectsImage}
         />
 
         <Canvas 

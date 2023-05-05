@@ -3,7 +3,7 @@ import Slider from "../Slider";
 import ColorPicker from "../ColorPicker";
 import { hexToRgb } from "../../helpers/colorConverter";
 
-export const ToolbarEffects = ({toolbarStore, setToolbarStore}) => {
+export const ToolbarEffects = ({toolbarStore, setToolbarStore, clearCanvasBackground, saveEffectsImage}) => {
 
 
   const setEffectProperty = (key, value) => {
@@ -40,6 +40,9 @@ export const ToolbarEffects = ({toolbarStore, setToolbarStore}) => {
         <hr />
         ⚠ SHOULD ONLY BE USED AS POSTPROCESSING!
       </div>
+
+      {/* <button onClick={clearCanvasBackground}>RESET BACKGROUND</button> */}
+      <button onClick={saveEffectsImage}>PREVIEW EFFECTS</button>
 
       <div className="toolbar__content">
         <Slider
@@ -99,7 +102,7 @@ export const ToolbarEffects = ({toolbarStore, setToolbarStore}) => {
           callback={value => setEffectProperty("blur", value/100)}
         />
 
-        <Slider
+        {/* <Slider
           title="Tint"
           value={Math.round(toolbarStore.effectsStore.tintOpacity * 100)}
           min={0}
@@ -110,7 +113,7 @@ export const ToolbarEffects = ({toolbarStore, setToolbarStore}) => {
           currentColorCode={hexToRgb(toolbarStore.effectsStore.tintColor)}
           callback={hex => setEffectProperty("tintColor", hex)}
           output="hex"
-        />
+        /> */}
         <button
           className="toolbar__action-btn"
           onClick={resetEffects}
