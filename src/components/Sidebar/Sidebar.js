@@ -253,10 +253,12 @@ function Sidebar({setResponseImageUrls, responseImageUrls, selectedImageUrl,
                        </div> 
 
                 case "<int>":
-                  return <div>
-                      <label>{i}</label>
-                      <input type="range" min="0" max="20" name={i} /> 
-                      {/* need better range control */}
+                  return <div class='slider_range_container'>
+                      <label>{i} &nbsp; </label>
+                      <input type="range" min="0" max="20" name={i} id={i} class='slider_range_input'
+                      onChange={ () => {document.getElementById(`show_${i}`).innerText = document.getElementById(i).value}} />
+                      <span class="slider_range_text"><span id={`show_${i}`}>20</span> / 20 </span>
+                      
                       </div> 
                 
 
