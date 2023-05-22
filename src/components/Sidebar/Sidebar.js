@@ -33,9 +33,11 @@ function Sidebar({setResponseImageUrls, responseImageUrls, selectedImageUrl,
 
   const [finalImageUrl, setFinalImageUrl] = useState(selectedImageUrl);
 
+  const [loading, setLoading] = useState(false);
 
   const [mask, setMask] = useState(null);
 
+  const [resposneInfo, setResponseInfo] = useState({'message': null, 'error': null})
 
   const refreshInfo = () => {
       console.log("refreshing data...")
@@ -117,56 +119,69 @@ function Sidebar({setResponseImageUrls, responseImageUrls, selectedImageUrl,
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    
-    let formData = new FormData(e.target);
-    // console.log(formData);
+   
+    if (!loading && jobSelect && workerSelect){
+        setLoading(true)
+        let formData = new FormData(e.target);
+        // console.log(formData);
 
-    let object = {};
-    formData.forEach(function(value, key){
-      if (key == "image_encoded" || key=="image_mask_encoded"){
-        value = value.split(",")[1] //remove data descriptor
-        object[key] = value;
-      } else{
-        object[key] = value;
-      }
-    });
-    console.log(object)
-
-    if(!isFederatedMode){
-    console.log("Submitting conventional....");
-
-      axios({
-        method: 'post',
-        url: `${serverURL.trim()}/execute_task/${workerSelect.trim()}`, // this should be set from the form
-        data: {
-          token : apiToken,
-          model: jobSelect,
-          ...object
-        }
-      })
-        .then(function (res) {
-          console.log(res)
-          // console.log(res.data)
-          setResponseImageUrls(res.data.data)
-        });
-    } else{
-      console.log("Submitting federated....");
-        axios({
-          method: 'post',
-          url: `${serverURL.trim()}/make_federated_request/${workerSelect.trim()}`, // this should be set from the form
-          data: {
-            token : apiToken,
-            model: jobSelect,
-            url: secondaryWorkerURL.trim(),
-            ...object
+        let object = {};
+        formData.forEach(function(value, key){
+          if (key == "image_encoded" || key=="image_mask_encoded"){
+            value = value.split(",")[1] //remove data descriptor
+            object[key] = value;
+          } else{
+            object[key] = value;
           }
-        })
-          .then(function (res) {
-            console.log(res)
-            // console.log(res.data)
-            setResponseImageUrls(res.data.data)
-          });
-    }
+        });
+        console.log(object)
+
+        if(!isFederatedMode){
+        console.log("Submitting conventional....");
+
+          axios({
+            method: 'post',
+            url: `${serverURL.trim()}/execute_task/${workerSelect.trim()}`, // this should be set from the form
+            data: {
+              token : apiToken,
+              model: jobSelect,
+              ...object
+            }
+          })
+            .then(function (res) {
+              console.log(res)
+              // console.log(res.data)
+              setResponseImageUrls(res.data.data)
+            })
+              .catch((err) => {
+                setResponseInfo({'message': err.message, 'error': true })
+              })
+
+        } else{
+          console.log("Submitting federated....");
+            axios({
+              method: 'post',
+              url: `${serverURL.trim()}/make_federated_request/${workerSelect.trim()}`, // this should be set from the form
+              data: {
+                token : apiToken,
+                model: jobSelect,
+                url: secondaryWorkerURL.trim(),
+                ...object
+              }
+            })
+              .then(function (res) {
+                console.log(res)
+                // console.log(res.data)
+                setResponseImageUrls(res.data.data)
+              })
+              .catch((err) => {
+                setResponseInfo({'message': err.message, 'error': true })
+              })
+        }
+      
+        
+        setLoading(false)
+      }
 
   }
 
@@ -287,7 +302,14 @@ function Sidebar({setResponseImageUrls, responseImageUrls, selectedImageUrl,
                 // more types and more type support
               }
             })}
-            <button id="generate-button" type='submit'>Generate</button>
+            <div className='generate-container'>
+
+              <button id="generate-button" type='submit' >Generate</button>
+              {loading && <p className="loading"></p>}
+              <p className={`response-message${resposneInfo.error && '-error'}`}>
+                {resposneInfo.message}
+              </p>
+            </div>
             </form>
           </div>
           </>

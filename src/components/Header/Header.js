@@ -19,10 +19,10 @@ const Header = ({imageUrl, setImageUrl, canvas, handleRedo, handleUndo}) => {
 
           <div className="header_redo_buttons">
             <Undo className="header_button"
-              onClick={handleUndo}
+              // onClick={handleUndo}
             />
             <Redo className="header_button"
-              onClick={handleRedo}
+              // onClick={handleRedo}
             />
           </div>
 

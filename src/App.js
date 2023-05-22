@@ -25,7 +25,8 @@ function App() {
   //   // setCanvas(data)
   // } 
 
-  const [history, setHistory] = useState([]);
+  // const [history, setHistory] = useState([]);
+  
 
   const [isDrawing, setIsDrawing] = useState(false);
 
@@ -34,6 +35,10 @@ function App() {
   let rect = null;
   let sX = 0;
   let sY = 0;
+
+
+  let historyUndo = useRef([]);
+  let historyRedo = useRef([]);
 
   const [toolbarStore, setToolbarStore] = useState({
     isDrawingMode: false,
@@ -83,47 +88,65 @@ function saveEffectsImage(){
   }
 }
 
-
-//not working yet
   function handleUndo() {
-    if (history.length > 1) {
-      const newHistory = history.slice(0, history.length - 1);
-      setHistory(newHistory);
-      const lastCanvasJSON = newHistory[newHistory.length - 1];
-      const newCanvas = new fabric.Canvas('canvas');
-      newCanvas.loadFromJSON(lastCanvasJSON, () => {
-        canvas.clear();
-        canvas.loadFromJSON(lastCanvasJSON, () => {
-          canvas.renderAll();
-        });
-      });
+    console.log('undo: ', historyUndo.current)
+    if (historyUndo.current.length < 1) {
+      return
     }
+    // let container = canvasRef.current.parentNode
+
+    let history = historyUndo.current.pop();      
+    historyRedo.current.push(history)
+
+    let newCanvas = new fabric.Canvas(canvasRef.current) 
+    newCanvas.loadFromJSON(history, () => {
+        newCanvas.renderAll()
+        tCount =  0;
+        // canvas.dispose();
+        setCanvas(newCanvas)
+    });
+    // let newCanvas = new fabric.Canvas(canvasRef.current, {
+    //           height: container.offsetHeight,
+    //           width: container.offsetWidth,
+    //           backgroundColor: 'white',
+    //           isDrawingMode: false
+    //       }) 
+    // setCanvas((canvas) => {
+    //   // canvas.clear()
+    //   // canvas.dispose()
+    //   canvas.loadFromJSON(history, () => {
+    //   });
+    //   canvas.renderAll()
+    //   return canvas
+    // })
+    // setCanvas(newCanvas)
   }
 
+  
   function handleRedo() {
-    if (history.length < 2) {
+    console.log('redo: ', historyRedo.current)
+    if (historyRedo.current.length < 1) {
       return;
     }
-    const newHistory = [...history, history[history.length - 1]];
-    setHistory(newHistory);
-    const lastCanvasJSON = newHistory[newHistory.length - 1];
-    const newCanvas = new fabric.Canvas('canvas');
-    newCanvas.loadFromJSON(lastCanvasJSON, () => {
-      canvas.clear();
-      canvas.loadFromJSON(lastCanvasJSON, () => {
-        canvas.renderAll();
-      });
-    });
+    
+    // let container = canvasRef.current.parentNode
+    let history = historyRedo.current.pop();      
+    historyUndo.current.push(canvas.toJSON())
+
+    // const newHistory = [...history, history[history.length - 1]];
+    // setHistory(newHistory);
+    // const lastCanvasJSON = newHistory[newHistory.length - 1];
+    // let newCanvas = new fabric.Canvas(canvasRef.current) 
+    // newCanvas.loadFromJSON(history, () => {
+    //     newCanvas.renderAll()
+    //     setCanvas(newCanvas)
+    // });
   }
 
   const handleCanvasChange = () => {
     // if (canvas){
-      // console.log("IN canvas change");
-      // let newCanvasJSON = canvas.toJSON();
-      // const newHistory = [...history, newCanvasJSON];
-      // console.log(newHistory);
-      // setHistory(newHistory);
-    // }
+      historyUndo.current.push(canvas.toJSON())
+      
   }
 
   
@@ -164,32 +187,10 @@ function saveEffectsImage(){
           }) 
 
     newCanvas.renderAll();
-    // newCanvas.on('mouse:down', handleMouseDown(newCanvas));
-    // newCanvas.on('mouse:up', handleMouseUp(newCanvas));
-
-    // window.addEventListener('keydown', function(e) {
-    //   if (e.key === "Delete") { 
-    //     let activeObject = newCanvas.getActiveObject();
-    //     if (activeObject) {
-    //       //TODO: history record
-    //       newCanvas.remove(activeObject);
-    //     }
-    //   }
-    // });
 
     window.addEventListener('keydown', function(e) {
         if (e.key === "Delete") { 
-          // console.log("Deleting")
-          // const canv = canvasStateRef.current;
-          // console.log(canv)
-
-          // if (canv){
-          //   console.log("Deleting actvie object")
-
-          //   let activeObject = canv.getActiveObject();
-          //   if (activeObject) {
-          //     console.log("Deleting actvie2 object")
-          //     //TODO: history record
+         
               setCanvas( (canvas) => {
 
                 console.log(canvas);
@@ -202,57 +203,48 @@ function saveEffectsImage(){
                 return canvas
               })
             }
-            // setCanvas(canv);
-        // }
-        // }
       });
 
     // _setCanvas(newCanvas);
     setCanvas(newCanvas);
-    setHistory([newCanvas.toJSON()]);
+    // setHistory([newCanvas.toJSON()]);
   }, []);
 
 
   useEffect(() => {
-    // _setCanvas(canvas)
 
     if (canvas != null && tCount == 0){
       canvas.on('mouse:down', handleMouseDown);
       canvas.on('mouse:up', handleMouseUp);
+
+      canvas.on('object:added', handleCanvasChange)
+      canvas.on('object:removed', handleCanvasChange)
+      // canvas.on('object:modified', handleCanvasChange)
+      // canvas.on('object:skewing', handleCanvasChange)
 
       canvas.on('path:created', (event) => {
       setCanvas(() => {
         let item = event.path;
         item.selectable = false;
         canvas.add(item);
-        // canvas.item(0).selectable = false;
 
         console.log("path created")
 
-        //can do some history recording here
         return canvas
       })
     });
 
+    tCount++; 
     }
     
   },[canvas])
 
 
-  
-
-  useEffect(() => {
-    // if (canvas) {
-    //         console.log('Registering event listeners...');
-    //   canvas.on('object:added', handleCanvasChange);
-    //   canvas.on('object:moved', handleCanvasChange);
-    //   return () => {
-    //         console.log('Removing event listeners...');
-    //     canvas.off('object:added', handleCanvasChange);
-    //     canvas.off('object:moved', handleCanvasChange);
-    //   };
-    // }
-  }, [canvas]);
+  // useEffect(() => {
+  //   if(canvas){
+  //     canvas.renderAll()
+  //   }
+  // }, [canvas]);
 
   useEffect(() => {
     if(canvas){
@@ -429,13 +421,8 @@ function saveEffectsImage(){
        />
     <Flex 
        direction={["column","column" , "row"]}
-      // flexWrap={["wrap", "nowrap"]}
-      // justifyContent={["center", "space-between"]}
-      // alignItems={["center", "flex-start"]}
-      // alignContent={["center", "stretch"]}
     
     >
-      {/* <Flex direction="row"> */}
         <Toolbar 
           toolbarStore={toolbarStore} 
           setToolbarStore={setToolbarStore}
@@ -458,7 +445,6 @@ function saveEffectsImage(){
           setCanvas={setCanvas} 
           selectedImageDetails={selectedImageDetails}
           />
-      {/* </Flex> */}
     </Flex>
     </>
 

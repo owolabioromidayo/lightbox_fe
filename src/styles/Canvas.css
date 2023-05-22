@@ -3,3 +3,7 @@
     margin: "10px 0 0 20px";
     height: "90vh";
 }
+
+#canvas{
+    background-color: white;
+}
