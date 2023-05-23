@@ -152,6 +152,7 @@ function Sidebar({setResponseImageUrls, responseImageUrls, selectedImageUrl,
               console.log(res)
               // console.log(res.data)
               setResponseImageUrls(res.data.data)
+              setResponseInfo({'message': '', 'error': false})
             })
               .catch((err) => {
                 setResponseInfo({'message': err.message, 'error': true })
@@ -173,6 +174,7 @@ function Sidebar({setResponseImageUrls, responseImageUrls, selectedImageUrl,
                 console.log(res)
                 // console.log(res.data)
                 setResponseImageUrls(res.data.data)
+                setResponseInfo({'message': '', 'error': false})
               })
               .catch((err) => {
                 setResponseInfo({'message': err.message, 'error': true })
