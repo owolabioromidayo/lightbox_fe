@@ -14,9 +14,9 @@ function Sidebar({setResponseImageUrls, responseImageUrls, selectedImageUrl,
   canvas, setCanvas, selectedImageDetails}) {
 
   const [workerInfo, setWorkerInfo] = useState([])
-  const [serverURL, setServerURL] = useState("http://localhost:3003")
-  const [apiToken, setApiToken ] = useState("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2ODM5NTk2ODIsImlhdCI6MTY4MzA5NTY4MiwiaWQiOjJ9.yMYxHrcju90GTt3UzBRp1jRutFYbnhF2XYbQKudc7nE")
-  const [secondaryWorkerURL, setSecondaryWorkerURL] = useState("")
+  const [serverURL, setServerURL] = useState(localStorage.getItem('serverURL'))
+  const [apiToken, setApiToken ] = useState(localStorage.getItem('apiToken'))
+  const [secondaryWorkerURL, setSecondaryWorkerURL] = useState(localStorage.getItem('secondaryWorkerURL'))
   // const [secondaryWorkerURL, setSecondaryWorkerURL] = useState("http://localhost:3009")
   // const [workerAddress, setWorkerAddress] = useState("")
 
@@ -79,11 +79,14 @@ function Sidebar({setResponseImageUrls, responseImageUrls, selectedImageUrl,
   
 
   useEffect(() => {
+       localStorage.setItem('serverURL', serverURL)
+       localStorage.setItem('apiToken', apiToken)
        refreshInfo()
   }, [serverURL, apiToken])
 
   useEffect(() => {
 
+    localStorage.setItem('secondaryServerURL', secondaryWorkerURL)
     const delayDebounceFn = setTimeout(() => {
         refreshInfo()
     }, 1000);
