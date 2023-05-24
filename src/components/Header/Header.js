@@ -18,10 +18,10 @@ const Header = ({imageUrl, setImageUrl, canvas, handleRedo, handleUndo}) => {
         <Flex direction="row" className="header">
 
           <div className="header_redo_buttons">
-            <Undo className="header_button"
+            <Undo className="header_button-disabled"
               // onClick={handleUndo}
             />
-            <Redo className="header_button"
+            <Redo className="header_button-disabled"
               // onClick={handleRedo}
             />
           </div>

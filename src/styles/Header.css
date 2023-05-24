@@ -28,7 +28,14 @@
     width: 30px;
     height: 30px;
     padding: 6px 60px 20px 0px;
+    fill: white;
+}
+
+
+.header_button-disabled{
+    width: 30px;
+    height: 30px;
+    padding: 6px 60px 20px 0px;
     /* fill: white; */
     fill: rgb(44, 42, 42);
 }
-
