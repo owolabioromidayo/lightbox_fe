@@ -15,9 +15,11 @@ function App() {
   const [selectedImageDetails, setSelectedImageDetails] = useState({x:0, y:0});
 
   const [cropMode, setCropMode] = useState(false);
+  const [applyEFfects, setApplyEffects] = useState(false);
 
   const canvasRef = useRef(null);
   const [canvas, setCanvas] = useState(null);
+  const [backgroundImage, setBackgroundImage] = useState(null);
   // const canvasStateRef  = useRef(canvas);
 
   // const _setCanvas = data => {
@@ -63,7 +65,18 @@ function App() {
       blur: 0,
       pixelate : 1
     },
-    textStore: {}
+    textStore: { 
+      fontSize: 12, 
+      lineHeight: 1,
+      fontWeight: "normal",
+      underline: false,
+      fontStyle: "normal",
+      textAlign: "center",
+      fontColorCode: "rgb(0,0,0)",
+      isBgTransparent: true,
+      bgColorCode: "rgb(255,255,255)"
+
+    }
   })
   
 function clearCanvasBackground() {
@@ -75,17 +88,46 @@ function clearCanvasBackground() {
 }
 
 function saveEffectsImage(){
-    if (canvas){
-    let bgURL = canvas.backgroundImage.toDataURL();
 
-    var image = new Image();
-    image.src = bgURL;
+    let effects= toolbarStore.effectsStore;
+    let filters = [
+        new fabric.Image.filters.Brightness({ brightness: effects.brightness }),
+        new fabric.Image.filters.Contrast({ contrast: effects.contrast}),
+        new fabric.Image.filters.Saturation({ saturation: effects.saturation }),
+        // new fabric.Image.filters.Tint({ color: effects.tintColor, opacity: effects.tintOpacity }),
+        new fabric.Image.filters.Invert({ invert: effects.invert }),
+        new fabric.Image.filters.HueRotation({ rotation: effects.hue}),
+        new fabric.Image.filters.Noise({ noise: effects.noise}),
+        new fabric.Image.filters.Blur({ blur: effects.blur }),
+        new fabric.Image.filters.Pixelate({ blocksize: effects.pixelate})
+      ];
 
-    let w = window.open("",'_blank');
-    w.document.write(image.outerHTML);
-    w.document.close(); 
+    setCanvas(canvas => {
+        canvas.backgroundImageFilters = filters;
+        canvas.renderAll();
+        clearCanvasBackground()
+        canvas.setBackgroundImage(canvas.toDataURL(), canvas.renderAll.bind(canvas), {
+          filters: filters
+        });
+      if (canvas && canvas.backgroundImage){
+      
+        let bgURL = canvas.backgroundImage.toDataURL();
+        clearCanvasBackground()
 
-  }
+        console.log('bgURL   \n', bgURL);
+
+        var image = new Image();
+        image.src = bgURL;
+
+        let w = window.open("",'_blank');
+        w.document.write(image.outerHTML);
+        w.document.close(); 
+
+    }
+        clearCanvasBackground()
+        return canvas
+      })
+
 }
 
   function handleUndo() {
@@ -288,12 +330,15 @@ function saveEffectsImage(){
         }
         canvas.freeDrawingBrush.straight = drawingProperties.isLineStraight;
 
-        canvas.backgroundImageFilters = filters;
+        // canvas.backgroundImageFilters = filters;
         // canvas.renderAll();
-        clearCanvasBackground()
-        canvas.setBackgroundImage(canvas.toDataURL(), canvas.renderAll.bind(canvas), {
-          filters: filters
-        });
+        // clearCanvasBackground()
+        // canvas.setBackgroundImage(canvas.toDataURL(), canvas.renderAll.bind(canvas), {
+        //   filters: filters
+        // });
+        // canvas.applyFilters()
+        // setBackgroundImage(canvas.backgroundImage.toDataURL())
+        // clearCanvasBackground()
 
        
         if (textStore.textObj){

@@ -11,6 +11,7 @@ import { fabric } from "fabric";
 import Slider from "../Slider";
 import ColorPicker from "../ColorPicker";
 import ToggleButton from "../ToggleButton";
+import { rgbToHex } from "../../helpers/colorConverter";
 
 const ToolbarText= ({toolbarStore, setToolbarStore}) => {
 
@@ -39,8 +40,17 @@ const ToolbarText= ({toolbarStore, setToolbarStore}) => {
             left: 50,
             top: 50,
             fontFamily: 'Arial',
-            fontSize: 24,
-            fill: '#000000'
+            fontSize: textStore.fontSize,
+            // fill: '#000000',
+            lineHeight: textStore.lineHeight,
+            fontWeight: textStore.fontWeight,
+            underline: textStore.underline,
+            fontStyle: textStore.fontStyle,
+            textAlign: textStore.textAlign,
+            fill: textStore.fontColorCode,
+            isBgTransparent: textStore.isBgTransparent,
+            textBackgroundColor: textStore.bgColorCode,
+
         });
  
         setTextProperty("textObj", text )
@@ -114,7 +124,7 @@ const ToolbarText= ({toolbarStore, setToolbarStore}) => {
           min={TextСonstants.MIN_FONT_SIZE}
           max={TextСonstants.MAX_FONT_SIZE}
           callback={value => {
-            textStore.setFontSize(value);
+           setTextProperty('fontSize', value);
           }}
         />
         <Slider
@@ -127,7 +137,7 @@ const ToolbarText= ({toolbarStore, setToolbarStore}) => {
         <ColorPicker
           title="Colors"
           currentColorCode={textStore.fontColorCode}
-          callback={rgbCode => setTextProperty("fontColorCode", rgbCode)}
+          callback={rgbCode => setTextProperty("fontColorCode",  `rgb(${rgbCode})`)}
         />
         <ToggleButton
           title="Background"
@@ -137,7 +147,7 @@ const ToolbarText= ({toolbarStore, setToolbarStore}) => {
         {!textStore.isBgTransparent && (
           <ColorPicker
             currentColorCode={textStore.bgColorCode}
-            callback={rgbCode => setTextProperty("bgColorCode", rgbCode)}
+            callback={rgbCode => setTextProperty("bgColorCode", `rgb(${rgbCode})`)}
           />
         )}
         {/* <button
