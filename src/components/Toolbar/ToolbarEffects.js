@@ -3,7 +3,7 @@ import Slider from "../Slider";
 import ColorPicker from "../ColorPicker";
 import { hexToRgb } from "../../helpers/colorConverter";
 
-export const ToolbarEffects = ({toolbarStore, setToolbarStore, clearCanvasBackground, saveEffectsImage}) => {
+export const ToolbarEffects = ({toolbarStore, setToolbarStore, saveEffectsImage}) => {
 
 
   const setEffectProperty = (key, value) => {
@@ -33,15 +33,14 @@ export const ToolbarEffects = ({toolbarStore, setToolbarStore, clearCanvasBackgr
        setToolbarStore(newStore)
   }
   return (
-    <div className="toolbar_settings">
+    <div className="toolbar__content">
 
-      <div className="toolbar__card">
+      {/* <div className="toolbar__card">
         WARNING!
         <hr />
         ⚠ SHOULD ONLY BE USED AS POSTPROCESSING!
-      </div>
+      </div> */}
 
-      {/* <button onClick={clearCanvasBackground}>RESET BACKGROUND</button> */}
       <div id='prev-container'>
         <button id='preview-effects-btn' onClick={saveEffectsImage}>VIEW EFFECTS</button>
       </div>

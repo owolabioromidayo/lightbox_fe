@@ -18,7 +18,7 @@ import ToolbarEffects from "./ToolbarEffects";
 
 import "../../styles/Toolbar.css";
 
-const Toolbar = ({toolbarStore, setToolbarStore, setCropMode, clearCanvasBackground, saveEffectsImage}) => {
+const Toolbar = ({toolbarStore, setToolbarStore, setCropMode,  saveEffectsImage}) => {
 
     const [settingChoice, setSettingChoice] = useState("");
 
@@ -96,7 +96,7 @@ const Toolbar = ({toolbarStore, setToolbarStore, setCropMode, clearCanvasBackgro
         <ToolbarDrawing toolbarStore={toolbarStore} setToolbarStore={setToolbarStore} />:
         settingChoice == "effects" ?
         <ToolbarEffects toolbarStore={toolbarStore} setToolbarStore={setToolbarStore} 
-            clearCanvasBackground={clearCanvasBackground} saveEffectsImage={saveEffectsImage} /> :
+             saveEffectsImage={saveEffectsImage} /> :
          <></>  }
         </div>
     )

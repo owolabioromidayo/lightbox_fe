@@ -7,6 +7,8 @@ import Toolbar from "./components/Toolbar/Toolbar";
 import { fabric } from "fabric";
 import Sidebar from "./components/Sidebar/Sidebar";
 
+import { hexToRgb } from "./helpers/colorConverter";
+
 function App() {
 
   const [imageUrl, setImageUrl]  = useState(null);
@@ -15,17 +17,9 @@ function App() {
   const [selectedImageDetails, setSelectedImageDetails] = useState({x:0, y:0});
 
   const [cropMode, setCropMode] = useState(false);
-  const [applyEFfects, setApplyEffects] = useState(false);
 
   const canvasRef = useRef(null);
   const [canvas, setCanvas] = useState(null);
-  const [backgroundImage, setBackgroundImage] = useState(null);
-  // const canvasStateRef  = useRef(canvas);
-
-  // const _setCanvas = data => {
-  //   canvasStateRef.current = data;
-  //   // setCanvas(data)
-  // } 
 
   // const [history, setHistory] = useState([]);
   
@@ -79,16 +73,9 @@ function App() {
     }
   })
   
-function clearCanvasBackground() {
-  if (canvas) {
-    canvas.setBackgroundImage(null);
-    canvas.setBackgroundColor('white');
-    canvas.renderAll();
-  }
-}
+
 
 function saveEffectsImage(){
-
     let effects= toolbarStore.effectsStore;
     let filters = [
         new fabric.Image.filters.Brightness({ brightness: effects.brightness }),
@@ -100,33 +87,28 @@ function saveEffectsImage(){
         new fabric.Image.filters.Noise({ noise: effects.noise}),
         new fabric.Image.filters.Blur({ blur: effects.blur }),
         new fabric.Image.filters.Pixelate({ blocksize: effects.pixelate})
+
       ];
 
-    setCanvas(canvas => {
-        canvas.backgroundImageFilters = filters;
-        canvas.renderAll();
-        clearCanvasBackground()
-        canvas.setBackgroundImage(canvas.toDataURL(), canvas.renderAll.bind(canvas), {
-          filters: filters
-        });
-      if (canvas && canvas.backgroundImage){
-      
-        let bgURL = canvas.backgroundImage.toDataURL();
-        clearCanvasBackground()
+      if (canvas){
+        fabric.Image.fromURL(canvas.toDataURL() , (img) => {
 
-        console.log('bgURL   \n', bgURL);
+          for(let filter of filters){
+            img.filters.push(filter)
+          }
 
-        var image = new Image();
-        image.src = bgURL;
+          img.applyFilters();
 
-        let w = window.open("",'_blank');
-        w.document.write(image.outerHTML);
-        w.document.close(); 
+          var image = new Image();
+          image.src = img.toDataURL();
 
+          let w = window.open("",'_blank');
+          w.document.write(image.outerHTML);
+          w.document.close(); 
+        }) ;
     }
-        clearCanvasBackground()
-        return canvas
-      })
+     
+  
 
 }
 
@@ -294,21 +276,7 @@ function saveEffectsImage(){
       // const newCanvas =  new fabric.Canvas(canvasRef.current);
 
       let drawingProperties = toolbarStore.drawingStore;
-      let effects= toolbarStore.effectsStore;
       let textStore= toolbarStore.textStore;
-
-
-      let filters = [
-        new fabric.Image.filters.Brightness({ brightness: effects.brightness }),
-        new fabric.Image.filters.Contrast({ contrast: effects.contrast}),
-        new fabric.Image.filters.Saturation({ saturation: effects.saturation }),
-        // new fabric.Image.filters.Tint({ color: effects.tintColor, opacity: effects.tintOpacity }),
-        new fabric.Image.filters.Invert({ invert: effects.invert }),
-        new fabric.Image.filters.HueRotation({ rotation: effects.hue}),
-        new fabric.Image.filters.Noise({ noise: effects.noise}),
-        new fabric.Image.filters.Blur({ blur: effects.blur }),
-        new fabric.Image.filters.Pixelate({ blocksize: effects.pixelate})
-      ];
 
 
       //other toolbar change settings here
@@ -316,11 +284,9 @@ function saveEffectsImage(){
 
         canvas.isDrawingMode = toolbarStore.isDrawingMode;
         canvas.selection = toolbarStore.isSelectionMode;
-        
-      
-        canvas.freeDrawingBrush.color = drawingProperties.colorCode;
+              
+        canvas.freeDrawingBrush.color = `rgba(${hexToRgb(drawingProperties.colorCode)}, ${drawingProperties.opacity})`;
         canvas.freeDrawingBrush.width = drawingProperties.lineWidth;
-        canvas.freeDrawingBrush.opacity = drawingProperties.opacity;
 
         if (toolbarStore.drawingStore.isErasing){
 
@@ -329,17 +295,6 @@ function saveEffectsImage(){
           canvas.freeDrawingBrush.opacity = drawingProperties.opacity;
         }
         canvas.freeDrawingBrush.straight = drawingProperties.isLineStraight;
-
-        // canvas.backgroundImageFilters = filters;
-        // canvas.renderAll();
-        // clearCanvasBackground()
-        // canvas.setBackgroundImage(canvas.toDataURL(), canvas.renderAll.bind(canvas), {
-        //   filters: filters
-        // });
-        // canvas.applyFilters()
-        // setBackgroundImage(canvas.backgroundImage.toDataURL())
-        // clearCanvasBackground()
-
        
         if (textStore.textObj){
           canvas.add(textStore.textObj)
@@ -436,16 +391,11 @@ function saveEffectsImage(){
 
           let newCanv = canvas.add(oImg).renderAll();
 
-
           // newCanv.on('mouse:down', handleMouseDown);
           // newCanv.on('mouse:up', handleMouseUp);
           // newCanv.on()
           
           setCanvas(newCanv);
-
-
-          
-
 
       }
       );
@@ -472,7 +422,6 @@ function saveEffectsImage(){
           toolbarStore={toolbarStore} 
           setToolbarStore={setToolbarStore}
           setCropMode={setCropMode}
-          clearCanvasBackground= {clearCanvasBackground}
           saveEffectsImage={saveEffectsImage}
         />
 
