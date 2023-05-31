@@ -86,7 +86,7 @@ function Sidebar({setResponseImageUrls, responseImageUrls, selectedImageUrl,
 
   useEffect(() => {
 
-    localStorage.setItem('secondaryServerURL', secondaryWorkerURL)
+    localStorage.setItem('secondaryWorkerURL', secondaryWorkerURL)
     const delayDebounceFn = setTimeout(() => {
         refreshInfo()
     }, 1000);
