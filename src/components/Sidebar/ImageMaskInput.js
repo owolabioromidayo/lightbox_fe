@@ -28,7 +28,7 @@ function ImageMaskInput({mask, setMask}) {
 
     const handleReset = () => {
 
-        let canv = new fabric.Canvas(canvasRef, {
+        let canv = new fabric.Canvas("image_mask_canv", {
                 height:  height,
                 width: height,
                 backgroundColor: 'white',
@@ -38,8 +38,8 @@ function ImageMaskInput({mask, setMask}) {
         canv.freeDrawingBrush.color = "#000"
         canv.freeDrawingBrush.width = 80
 
-        canv.renderAll();
         setCanvas(canv)
+        canv.renderAll();
 
     }
 
@@ -66,7 +66,7 @@ function ImageMaskInput({mask, setMask}) {
     <div>
         <canvas id="image_mask_canv" ref={canvasRef} />
         <button onClick={handleConfirm}>Confirm</button>
-        <button onClick={handleReset}>Reset</button>
+        {/* <button onClick={handleReset}>Reset</button> */}
     </div>
     );
 }
