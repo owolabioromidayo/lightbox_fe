@@ -241,29 +241,29 @@ function saveEffectsImage(){
       canvas.on('mouse:down', handleMouseDown);
       canvas.on('mouse:up', handleMouseUp);
 
-      canvas.on('touch:drag', function(e){
-      let touch = e.e.touches ? e.e.touches[0] : e.e;
-      let pageX = canvas.getPointer(touch).x
-      let pageY = canvas.getPointer(touch).y
+    //   canvas.on('touch:drag', function(e){
+    //   let touch = e.e.touches ? e.e.touches[0] : e.e;
+    //   let pageX = canvas.getPointer(touch).x
+    //   let pageY = canvas.getPointer(touch).y
 
-      // const canv = canvasRef.current;
-      // const container = canv.getBoundingClientRect();
-      // sX = e.e.pageX - container.left;
-      // sY = e.e.pageY - container.top;
+    //   // const canv = canvasRef.current;
+    //   // const container = canv.getBoundingClientRect();
+    //   // sX = e.e.pageX - container.left;
+    //   // sY = e.e.pageY - container.top;
 
 
-      rect = new fabric.Rect({
-        left: pageX,
-        top: pageY,
-        width: 0,
-        height: 0,
-        fill: 'rgba(0, 0, 0, 0.5)',
-        stroke: '#ccc',
-        strokeWidth: 2,
-        selectable: false,
-      });
-    cropImage(canvas, rect)
-    })
+    //   rect = new fabric.Rect({
+    //     left: pageX,
+    //     top: pageY,
+    //     width: 0,
+    //     height: 0,
+    //     fill: 'rgba(0, 0, 0, 0.5)',
+    //     stroke: '#ccc',
+    //     strokeWidth: 2,
+    //     selectable: false,
+    //   });
+    // cropImage(canvas, rect)
+    // })
 
 
 
