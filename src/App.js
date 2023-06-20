@@ -241,6 +241,9 @@ function saveEffectsImage(){
       canvas.on('mouse:down', handleMouseDown);
       canvas.on('mouse:up', handleMouseUp);
 
+      canvas.on("touch:start", handleTouchStart);
+      canvas.on("touch:end", handleTouchEnd);
+
       canvas.on('object:added', handleCanvasChange)
       canvas.on('object:removed', handleCanvasChange)
       // canvas.on('object:modified', handleCanvasChange)
@@ -310,7 +313,6 @@ function saveEffectsImage(){
 
 
 
-
   const handleMouseUp = () => {
     // if (canvas){
 
@@ -326,6 +328,7 @@ function saveEffectsImage(){
      cropImage(canvas, rect);
     // }
   };
+  
 
   const handleMouseMove = e => {
     if (isDrawing){
@@ -404,6 +407,21 @@ function saveEffectsImage(){
   }, [imageUrl])
 
 
+  // Get the HTML canvas element
+  let htmlCanvas = document.getElementById('canvas');
+
+  // Prevent default touch events to avoid interference
+  htmlCanvas.addEventListener('touchstart', function(event) {
+    event.preventDefault();
+  });
+
+  htmlCanvas.addEventListener('touchmove', function(event) {
+    event.preventDefault();
+  });
+
+  htmlCanvas.addEventListener('touchend', function(event) {
+    event.preventDefault();
+  });
 
   return (
     <>
