@@ -241,25 +241,40 @@ function saveEffectsImage(){
       canvas.on('mouse:down', handleMouseDown);
       canvas.on('mouse:up', handleMouseUp);
 
+      canvas.on('touch:drag', function(e){
+      let touch = e.e.touches ? e.e.touches[0] : e.e;
+      let pageX = canvas.getPointer(touch).x
+      let pageY = canvas.getPointer(touch).y
+
+      // const canv = canvasRef.current;
+      // const container = canv.getBoundingClientRect();
+      // sX = e.e.pageX - container.left;
+      // sY = e.e.pageY - container.top;
+
+
+      rect = new fabric.Rect({
+        left: pageX,
+        top: pageY,
+        width: 0,
+        height: 0,
+        fill: 'rgba(0, 0, 0, 0.5)',
+        stroke: '#ccc',
+        strokeWidth: 2,
+        selectable: false,
+      });
+    cropImage(canvas, rect)
+    })
+
+
+
       canvas.on('object:added', handleCanvasChange)
       canvas.on('object:removed', handleCanvasChange)
       // canvas.on('object:modified', handleCanvasChange)
       // canvas.on('object:skewing', handleCanvasChange)
     // Get the HTML canvas element
-    let htmlCanvas = document.getElementById('canvas');
+   
 
-    // Prevent default touch events to avoid interference
-    htmlCanvas.addEventListener('touchstart', function(event) {
-      event.preventDefault();
-    });
-
-    htmlCanvas.addEventListener('touchmove', function(event) {
-      event.preventDefault();
-    });
-
-    htmlCanvas.addEventListener('touchend', function(event) {
-      event.preventDefault();
-    });
+   
 
       canvas.on('path:created', (event) => {
       setCanvas(() => {
