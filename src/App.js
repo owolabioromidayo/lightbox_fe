@@ -245,6 +245,21 @@ function saveEffectsImage(){
       canvas.on('object:removed', handleCanvasChange)
       // canvas.on('object:modified', handleCanvasChange)
       // canvas.on('object:skewing', handleCanvasChange)
+    // Get the HTML canvas element
+    let htmlCanvas = document.getElementById('canvas');
+
+    // Prevent default touch events to avoid interference
+    htmlCanvas.addEventListener('touchstart', function(event) {
+      event.preventDefault();
+    });
+
+    htmlCanvas.addEventListener('touchmove', function(event) {
+      event.preventDefault();
+    });
+
+    htmlCanvas.addEventListener('touchend', function(event) {
+      event.preventDefault();
+    });
 
       canvas.on('path:created', (event) => {
       setCanvas(() => {
@@ -404,21 +419,6 @@ function saveEffectsImage(){
   }, [imageUrl])
 
 
-  // Get the HTML canvas element
-  let htmlCanvas = document.getElementById('canvas');
-
-  // Prevent default touch events to avoid interference
-  htmlCanvas.addEventListener('touchstart', function(event) {
-    event.preventDefault();
-  });
-
-  htmlCanvas.addEventListener('touchmove', function(event) {
-    event.preventDefault();
-  });
-
-  htmlCanvas.addEventListener('touchend', function(event) {
-    event.preventDefault();
-  });
 
   return (
     <>
