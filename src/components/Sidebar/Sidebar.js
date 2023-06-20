@@ -122,6 +122,7 @@ function Sidebar({setResponseImageUrls, responseImageUrls, selectedImageUrl,
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
+    window.alert('Generating images. Do not double click!')
    
     if (!loading && jobSelect && workerSelect){
         setLoading(true)
