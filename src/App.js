@@ -241,9 +241,6 @@ function saveEffectsImage(){
       canvas.on('mouse:down', handleMouseDown);
       canvas.on('mouse:up', handleMouseUp);
 
-      canvas.on("touch:start", handleTouchStart);
-      canvas.on("touch:end", handleTouchEnd);
-
       canvas.on('object:added', handleCanvasChange)
       canvas.on('object:removed', handleCanvasChange)
       // canvas.on('object:modified', handleCanvasChange)
