@@ -13,8 +13,9 @@ function Base64ImageInput({ selectedImageUrl, finalImageUrl, setFinalImageUrl })
     // do something with the base64 encoded image data
   };
 
-  const handleReselect = () => {
+  const handleReselect = (e) => {
     // setShowConfirm(false);
+    e.preventDefault()
     setConfirm(false);
     // setImageUrl(defaultImageUrl);
   };
